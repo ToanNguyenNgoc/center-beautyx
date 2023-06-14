@@ -1,0 +1,17 @@
+//section banners
+.section_banner_cnt {
+    width: 100%;
+    background-color: var(--kt-gray-300);
+    cursor: pointer;
+    margin-bottom: 12px;
+}
+.section_focus{
+    border: solid 1px var(--red_2);
+}
+
+.banner_item_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+//section banners----

@@ -1,0 +1,56 @@
+import React from 'react'
+import {IProductSingle} from 'app/interface/product_single'
+import {Link} from 'react-router-dom'
+import {formatPrice, formatSalePriceProduct, onErrorImg, StatusElement} from 'app/util'
+
+export default function ProductItem({item}: {item: IProductSingle}) {
+  return (
+    <tr className='text-gray-400 fw-bold fs-7 gs-0'>
+      <td
+        className=' sorting'
+        tabIndex={0}
+        aria-controls='kt_ecommerce_products_table'
+        rowSpan={1}
+        colSpan={1}
+      >
+        <div className='d-flex align-items-center'>
+          <Link to={'#'} className='symbol symbol-50px'>
+            <img
+              onError={(e) => onErrorImg(e)}
+              className='symbol-label'
+              src={`${item?.org_image}`}
+              alt=''
+            />
+          </Link>
+          <div className='ms-5'>
+            <a
+              href='/metronic8/demo1/../demo1/apps/ecommerce/catalog/edit-product.html'
+              className='text-dark fs-5 fw-bold text-hover-success'
+            >
+              {item?.product_name}
+            </a>
+          </div>
+        </div>
+      </td>
+      <th className='sorting text-gray-600'>{formatPrice(item?.retail_price)}</th>
+      <th className='sorting text-gray-800'>
+        {formatPrice(formatSalePriceProduct(item?.special_price, item?.special_price_momo))}
+      </th>
+      <th className='sorting text-gray-600'>{item?.org_name}</th>
+      <th className=' sorting'>
+        <StatusElement status={item?.is_momo_ecommerce_enable} />
+      </th>
+      <th className='text-end'>
+        <button
+          style={{marginRight: '8px'}}
+          className='btn btn-bg-light btn-color-muted btn-active-color-primary btn-sm px-4'
+        >
+          <i className='bi bi-eye-fill fs-6'></i>
+        </button>
+        <button className='btn btn-bg-light btn-color-muted btn-active-color-primary btn-sm px-4'>
+          <i className='bi bi-pencil-fill fs-6'></i>
+        </button>
+      </th>
+    </tr>
+  )
+}

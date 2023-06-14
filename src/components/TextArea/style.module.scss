@@ -1,0 +1,15 @@
+.container {
+    background-color: #f5f8fa;
+    border-color: #f5f8fa;
+    color: #5e6278;
+    transition: color .2s ease, background-color .2s ease;
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    padding: 0.75rem 1rem;
+    border: none;
+    outline: none;
+    border-radius: 0.475rem;
+    min-height: 68px;
+    height: 100%;
+}

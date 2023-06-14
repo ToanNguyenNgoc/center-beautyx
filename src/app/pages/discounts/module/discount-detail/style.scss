@@ -1,0 +1,98 @@
+.card-custom {
+    .card-detail-head {
+        padding: 12px 24px;
+        border-bottom: solid 1px var(--bs-gray-200);
+
+        .left {
+            .left-item {
+                margin-bottom: 4px;
+            }
+
+            .left-item__title {
+                font-size: 12px;
+                line-height: 14px;
+                margin-right: 8px;
+            }
+
+            .badge-light-danger {
+                font-size: 14px;
+                line-height: 16px;
+            }
+        }
+    }
+
+    .title {
+        font-size: 14px;
+        line-height: 16px;
+    }
+
+    .card-detail-apply {
+        width: 100%;
+        padding: 12px 24px;
+        border-bottom: solid 1px var(--bs-gray-200);
+
+        .card-detail-apply__item {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+
+            .title {
+                font-size: 12px;
+                line-height: 14px;
+                margin-right: 8px;
+            }
+
+            .value {
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--red_2);
+            }
+        }
+    }
+
+    .card-org-list {
+        padding: 12px 24px;
+
+        .list {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+
+            .list-item {
+                width: 16.6%;
+                padding: 4px 8px;
+
+                .org-item-card {
+                    cursor: pointer;
+                    width: 100%;
+                    transition: all .3s;
+
+                    .org-avatar {
+                        transition: all .3s;
+                        width: 72px;
+                        height: 72px;
+                        object-fit: cover;
+                        border-radius: 100%;
+                    }
+
+                    .org-name {
+                        width: 100%;
+                        text-align: center;
+                        margin-top: 8px;
+                    }
+                }
+
+                .org-item-card:hover {
+                    transition: all .3s;
+                    transform: translateY(-10px);
+                }
+
+                .org-item-card:hover .org-avatar {
+                    transition: all .3s;
+                    box-shadow: 0 6px 15px #dcd8ee;
+                }
+            }
+        }
+    }
+}

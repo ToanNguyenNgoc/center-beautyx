@@ -1,0 +1,10 @@
+.container {
+    margin: 0px 4px;
+    button {
+        text-transform: capitalize !important;
+        width: 100% !important;
+        i{
+            color: var(--white) !important;
+        }
+    }
+}

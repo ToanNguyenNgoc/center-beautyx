@@ -1,0 +1,56 @@
+.org-card {
+    width: 100%;
+    cursor: pointer;
+    transition: all .3s;
+    border-radius: 8px;
+
+    .org-card__img {
+        width: 100%;
+        border-radius: 8px;
+    }
+
+    .card-org__detail {
+        padding: 8px;
+
+        .name {
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            color: var(--text-black);
+            display: -webkit-box;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 16px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-break: break-word;
+        }
+
+        .address {
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            color: grey;
+            display: -webkit-box;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 18px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-break: break-word;
+        }
+
+        .contact {
+
+            .title,
+            li {
+                font-size: 11px;
+                line-height: 16px;
+            }
+        }
+    }
+}
+
+.org-card:hover {
+    transition: all .3s;
+    box-shadow: 0 6px 15px #dcd8ee;
+    transform: translateY(-10px);
+}
