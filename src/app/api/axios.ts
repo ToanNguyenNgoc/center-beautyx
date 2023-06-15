@@ -1,8 +1,8 @@
 import axios from 'axios'
 import queryString from 'query-string'
 
-export const baseURL = process.env.REACT_APP_API_DEV;
-// export const baseURL = process.env.REACT_APP_API_LIVE
+// export const baseURL = process.env.REACT_APP_API_DEV;
+export const baseURL = process.env.REACT_APP_API_LIVE
 const axiosClient = axios.create({
   baseURL: baseURL,
   headers: {

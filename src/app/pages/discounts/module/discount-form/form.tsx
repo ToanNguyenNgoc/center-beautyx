@@ -615,6 +615,7 @@ function Form(props: IProps) {
                             variant='contained'
                             size="large"
                             color="success"
+                            disabled
                         >
                             Lưu thay đổi
                         </LoadingButton>

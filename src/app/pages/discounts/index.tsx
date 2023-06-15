@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useVerifyRoute } from 'app/hooks';
 import TitlePage from 'components/TitlePage';
 import { formatDate } from 'app/util/format';
-import { DiscountsTypeElement } from 'app/util/fileType';
+import { DISCOUNTS_TYPE, DiscountsTypeElement } from 'app/util/fileType';
 import FlatFormOrder from 'components/PlatForm';
 import { KTSVG } from '_metronic/helpers';
 import { IDiscountPar } from 'app/interface';
@@ -12,6 +12,9 @@ import { QR_KEY } from 'common';
 import { discountsApi } from 'app/api';
 import queryString from 'query-string';
 import { ReqDiscount } from '@types';
+import { FormControl, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { PLAT_FORM_ARR } from 'app/util';
+import './style.scss'
 
 function Discounts() {
     const location = useLocation()
@@ -24,6 +27,8 @@ function Discounts() {
         queryFn: () => discountsApi.getAll({
             page: query?.page ?? 1,
             limit: 10,
+            'filter[platform]': query['filter[platform]'],
+            'filter[discount_type]': query['filter[discount_type]'],
             sort: '-created_at'
         })
     })
@@ -61,6 +66,7 @@ function Discounts() {
                         <span className='text-muted mt-1 fw-semobold fs-7'>Số lượng : {data?.total ?? 1}</span>
                     </h3>
                 </div>
+                <Filter query={query} />
                 <div className='card-body py-3'>
                     <div className='table-responsive'>
                         <table className='table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4'>
@@ -184,6 +190,78 @@ function Discounts() {
             </div>
         </>
     );
+}
+const Filter = ({ query }: { query: ReqDiscount }) => {
+    const navigate = useNavigate()
+    const location = useLocation()
+    const handleChange = (event: SelectChangeEvent) => {
+        const newQuery = {
+            ...query,
+            'page': 1,
+            'filter[platform]': event.target.value
+        }
+        navigate({
+            pathname: location.pathname,
+            search: queryString.stringify(newQuery)
+        })
+    };
+    const onChangeType = (e: SelectChangeEvent) => {
+        const newQuery: ReqDiscount = {
+            ...query,
+            'page': 1,
+            'filter[discount_type]': e.target.value
+        }
+        navigate({
+            pathname: location.pathname,
+            search: queryString.stringify(newQuery)
+        })
+    }
+    return (
+        <div className="filter-cnt">
+            <div className="filter-row">
+                <div className="filter-row_platform">
+                    <label className="filter-row_label">Hình thức giảm giá</label>
+                    <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
+                        <Select
+                            labelId="demo-select-small-label"
+                            id="demo-select-small"
+                            value={query['filter[discount_type]'] ?? ''}
+                            onChange={onChangeType}
+                        >
+                            <MenuItem value="">
+                                <em>Tất cả</em>
+                            </MenuItem>
+                            {
+                                DISCOUNTS_TYPE.map(item => (
+                                    <MenuItem key={item.id} value={item.TYPE}>{item.title}</MenuItem>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
+                </div>
+                <div className="filter-row_platform">
+                    <label className="filter-row_label">Nền tảng</label>
+                    <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
+                        <Select
+                            labelId="demo-select-small-label"
+                            id="demo-select-small"
+                            value={query['filter[platform]'] ?? ''}
+                            onChange={handleChange}
+                        >
+                            <MenuItem value="">
+                                <em>Tất cả</em>
+                            </MenuItem>
+                            {
+                                PLAT_FORM_ARR.map(item => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default Discounts;

@@ -19,7 +19,7 @@ export type ReqDiscount = {
   page?: number | string;
   limit?: number | string;
   'filter[platform]'?: string;
-  'filter[discount_type]'?: "SUB_TOTAL" | "FINAL_PRICE" | "PRODUCT" | "";
+  'filter[discount_type]'?: "SUB_TOTAL" | "FINAL_PRICE" | "PRODUCT" | "" | string;
   'filter[organization_id]'?: number | string;
   'filter[location]'?: string;
   'sort'?: string;
