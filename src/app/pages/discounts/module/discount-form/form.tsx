@@ -6,7 +6,7 @@ import { debounce } from "lodash";
 import * as Yup from "yup";
 import { format } from 'date-fns';
 import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
-import { FlatFormOrder, SerProCard, XSwitch } from 'components'
+import { AppSnack, FlatFormOrder, SerProCard, XSwitch } from 'components'
 import orgApi from 'app/api/orgApi';
 import moment from 'moment';
 import { useMutation } from 'react-query';
@@ -23,6 +23,8 @@ import {
     formatPrice,
     onErrorImg
 } from 'app/util';
+import { useMessage } from 'app/hooks';
+import { useNavigate } from 'react-router-dom';
 
 
 interface IProps {
@@ -34,6 +36,8 @@ interface IProps {
 function Form(props: IProps) {
     const generateCode = moment().format('MMYYss')
     const { discount, isForm } = props;
+    const { resultLoad, onCloseNoti, noti } = useMessage()
+    const navigate = useNavigate()
     const [isCampaign, setIsCampaign] = useState(false)
     const [orgs, setOrgs] = useState<IOrganization[]>(discount?.organizations || [])
     const [services, setServices] = useState<any>([])
@@ -58,10 +62,17 @@ function Form(props: IProps) {
     const { mutate, isLoading } = useMutation({
         mutationFn: (body: ReqDiscountBody) => discountsApi.postDiscount(body),
         onSuccess: () => {
-
+            resultLoad({
+                message: 'Tạo thành công',
+                color: 'success'
+            })
+            setTimeout(() => navigate(-1), 2000)
         },
         onError: (error, variables, context) => {
-            console.log(error)
+            resultLoad({
+                message: 'Có lỗi xảy ra',
+                color: 'error'
+            })
         },
     })
 
@@ -116,7 +127,7 @@ function Form(props: IProps) {
             mutate(body)
         },
     })
-    const orgsChoose = formik.values?.organizations?.map((item: string) => JSON.parse(item));
+    const orgsChoose = formik.values?.organizations?.map((item: string) => item ? JSON.parse(item) : item);
     const getServicesByOrgs = async (keyword: string, orgsChoose: any) => {
         let servicesSearch = [];
         for (var org of orgsChoose) {
@@ -173,6 +184,9 @@ function Form(props: IProps) {
     //     let listServicesChoose = formik.values.items.map((i: string) => JSON.parse(i))
     //     console.log(listServicesChoose)
     // };
+    const onRemoveOrgItem = (index: number | string) => {
+        console.log(index)
+    }
 
     const onChangeInputDiscountValue = (e: any) => {
         if (formik.values.discount_unit === DISCOUNT_UNIT.PERCENT) {
@@ -211,7 +225,7 @@ function Form(props: IProps) {
     }
 
     const onChangeInputLimit = (e: any) => {
-        const total = formik.values.total
+        const total = parseInt(`${formik.values.total}`)
         if (formik.values.total === "") {
             return formik.setFieldValue("limit", e.target.value)
         }
@@ -223,6 +237,12 @@ function Form(props: IProps) {
 
     return (
         <>
+            <AppSnack
+                severity={noti.color}
+                message={noti.message}
+                open={noti.openAlert}
+                close={onCloseNoti}
+            />
             <form
                 className="discount-form"
                 onSubmit={formik.handleSubmit}
@@ -341,20 +361,12 @@ function Form(props: IProps) {
                         name="organizations"
                         renderValue={(selected: any) => (
                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected?.map((value: any, index: number) => {
+                                {selected?.filter(Boolean).map((value: any, index: number) => {
                                     const orgItem: IOrganization = JSON.parse(value);
                                     return (
                                         <div tabIndex={1} key={index} className="org-item-select">
                                             <img src={orgItem?.image_url} onError={(e) => onErrorImg(e)} alt="" className="avatar" />
                                             <span className="name">{orgItem?.name}</span>
-                                            {/* <img
-                                            className='icon'
-                                            onClick={(e) => {
-                                                e.preventDefault()
-                                                onRemoveOrgItem(index)
-                                            }}
-                                            src={ICONS.crossCircleBlack} alt=""
-                                        /> */}
                                         </div>
                                     )
                                 })}
@@ -583,8 +595,10 @@ function Form(props: IProps) {
                             onChange={(newValue) => {
                                 const startDate: any = newValue[0]
                                 const endDate: any = newValue[1]
-                                formik.setFieldValue("valid_from", format(startDate, "yyyy-MM-dd 00:00:00"))
-                                formik.setFieldValue("valid_util", format(endDate, "yyyy-MM-dd 00:00:00"))
+                                try {
+                                    formik.setFieldValue("valid_from", format(startDate, "yyyy-MM-dd 00:00:00"))
+                                    formik.setFieldValue("valid_util", format(endDate, "yyyy-MM-dd 00:00:00"))
+                                } catch (error) { }
                             }}
                             renderInput={(startProps, endProps) => (
                                 <React.Fragment>
@@ -615,7 +629,7 @@ function Form(props: IProps) {
                             variant='contained'
                             size="large"
                             color="success"
-                            disabled
+                        // disabled
                         >
                             Lưu thay đổi
                         </LoadingButton>

@@ -36,7 +36,7 @@ export const FlatFormOrder = (props: IProps) => {
                 return <li className='plat-form-item' style={{ backgroundColor: "var(--orange)" }}>
                     SHOPEE
                 </li>
-            case PLAT_FORM.VINID:
+            case PLAT_FORM.VNID:
                 return <li className='plat-form-item' style={{ backgroundColor: "#DC2222" }}>
                     VINID
                 </li>
