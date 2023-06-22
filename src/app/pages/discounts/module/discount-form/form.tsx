@@ -6,7 +6,7 @@ import { debounce } from "lodash";
 import * as Yup from "yup";
 import { format } from 'date-fns';
 import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
-import { AppSnack, FlatFormOrder, SerProCard, XSwitch } from 'components'
+import { AppSnack, FlatFormOrder, XSwitch } from 'components'
 import orgApi from 'app/api/orgApi';
 import moment from 'moment';
 import { useMutation } from 'react-query';
@@ -25,6 +25,7 @@ import {
 } from 'app/util';
 import { useMessage } from 'app/hooks';
 import { useNavigate } from 'react-router-dom';
+import { SelectService } from './select-service'
 
 
 interface IProps {
@@ -40,7 +41,10 @@ function Form(props: IProps) {
     const navigate = useNavigate()
     const [isCampaign, setIsCampaign] = useState(false)
     const [orgs, setOrgs] = useState<IOrganization[]>(discount?.organizations || [])
-    const [services, setServices] = useState<any>([])
+    const [services, setServices] = useState<any>(
+        isForm === "EDIT" ?
+            discount?.items.map((item: IITEMS_DISCOUNT) => item.productable) : []
+    )
     const callOrgsByKeyword = async (keyword: string) => {
         const res = await orgApi.getAll({
             keyword: keyword,
@@ -79,6 +83,7 @@ function Form(props: IProps) {
     //handle form
     const formik = useFormik({
         initialValues: {
+            priority: isForm === "EDIT" ? discount?.priority : 0,
             coupon_code: isForm === "EDIT" ? discount?.coupon_code : "",
             title: isForm === "EDIT" ? discount?.title : "",
             description: isForm === "EDIT" ? discount?.description : "",
@@ -90,9 +95,6 @@ function Form(props: IProps) {
             discount_unit: isForm === "EDIT" ? discount?.discount_unit : "",
             discount_value: isForm === "EDIT" ? discount?.discount_value : "",
             organizations: isForm === "EDIT" ? discount?.organizations.map((org: IOrganization) => JSON.stringify(org)) : [],
-            items: isForm === "EDIT" ? discount?.items.map((item: IITEMS_DISCOUNT) =>
-                JSON.stringify(item.productable)
-            ) : [],
             total: (isForm === "EDIT" && discount?.total) ? discount?.total : "",
             valid_from: (isForm === "EDIT" && discount?.valid_from) ? discount?.valid_from : "",
             valid_util: (isForm === "EDIT" && discount?.valid_util) ? discount?.valid_util : "",
@@ -108,7 +110,6 @@ function Form(props: IProps) {
             discount_value: Yup.string().required("Vui lòng nhập giá trị giảm"),
             platform: Yup.array().min(1, "Vui lòng chọn nền tảng áp dụng"),
             organizations: Yup.array().min(1, "Vui lòng chọn Doanh nghiệp"),
-            items: Yup.array().min(1, "Vui lòng chọn dịch vụ được áp dụng"),
             total: isCampaign ? Yup.number().min(0, 'Số lượng mã tối đa 2000 mã')
                 .max(2000, 'Số lượng mã tối đa 2000 mã')
                 .required('Vui lòng nhập số lượng mã')
@@ -120,72 +121,22 @@ function Form(props: IProps) {
             const body = {
                 ...newValue,
                 organizations: newValue.organizations.map((i: string) => JSON.parse(i))[0]?.id,
-                items: newValue.items.map((i: string) => JSON.parse(i))?.map((i: any) => i.id),
+                items: services.map((i: any) => i.id),
                 platform: newValue.platform[0] ?? 'MOMO',
                 is_campaign: isCampaign ? 1 : 0
             }
-            mutate(body)
+            if (services.length > 0) {
+                mutate(body)
+            }
         },
     })
     const orgsChoose = formik.values?.organizations?.map((item: string) => item ? JSON.parse(item) : item);
-    const getServicesByOrgs = async (keyword: string, orgsChoose: any) => {
-        let servicesSearch = [];
-        for (var org of orgsChoose) {
-            const res = await orgApi.getServicesByOrg({
-                keyword: keyword,
-                org_id: org?.id
-            })
-            const newValues = {
-                services: res?.data.context.data,
-                org: org
-            }
-            servicesSearch.push(newValues)
-        }
-        setServices(servicesSearch)
-    }
-    const debounceDropDownServices = useCallback(
-        debounce((nextValue, orgsChoose) => {
-            getServicesByOrgs(nextValue, orgsChoose);
-        }, 1500),
-        []
-    );
-    const onChangeSearchServicesProducts = (e: any) => {
-        if (orgsChoose && orgsChoose.length > 0) {
-            debounceDropDownServices(e.target.value, orgsChoose)
-        }
-    }
-    const servicesOrgs = services.map((item: any) => {
-        const servicesList = item?.services?.map((i: any) => {
-            return {
-                ...i,
-                org: item?.org,
-                org_id: item?.org?.id
-            }
-        })
-        return servicesList
-    })
-    let serviceInit: any[] = [];
-    if (discount?.items) {
-        serviceInit = discount?.items?.map((i: IITEMS_DISCOUNT) => i.productable)
-    }
-    const servicesSelected = formik.values?.items
-        ?.map((i: string) => JSON.parse(i)) ?? []
-    const minPriceItem = Math.min.apply(null, servicesSelected.map((i: any) => i?.price));
+    const minPriceItem = Math.min.apply(null, services.map((i: any) => i?.price));
     let totalServicesPrice = 0;
-    if (servicesSelected.length > 0) {
-        totalServicesPrice = servicesSelected
+    if (services.length > 0) {
+        totalServicesPrice = services
             ?.map((i: any) => i?.price)
             ?.reduce((pre: number, cur: number) => pre + cur)
-    }
-
-    // const handleChangeOrgSelect = (e: any) => {
-    //     const listOrgId = e.target.value.map((i: string) => JSON.parse(i)).map((o: any) => o?.id)
-    //     formik.setFieldValue("organizations", e.target.value)
-    //     let listServicesChoose = formik.values.items.map((i: string) => JSON.parse(i))
-    //     console.log(listServicesChoose)
-    // };
-    const onRemoveOrgItem = (index: number | string) => {
-        console.log(index)
     }
 
     const onChangeInputDiscountValue = (e: any) => {
@@ -233,6 +184,7 @@ function Form(props: IProps) {
             return formik.setFieldValue("limit", e.target.value)
         }
     }
+    // console.log(services)
 
 
     return (
@@ -254,6 +206,19 @@ function Form(props: IProps) {
                             value={isCampaign}
                             onChange={(e) => setIsCampaign(e.target.checked)}
                             label='Is campaign (Áp dụng mã giảm giá Shopee, VinId)'
+                        />
+                    </div>
+                </div>
+                <div className="flex-row-sp input-wrap">
+                    <div className="wrap-item">
+                        <label className="form-label">Độ ưu tiên</label>
+                        <input
+                            onChange={formik.handleChange}
+                            value={formik.values.priority}
+                            name="priority"
+                            type="number"
+                            className="form-control form-control-solid"
+                            placeholder="Độ ưu tiên"
                         />
                     </div>
                 </div>
@@ -397,67 +362,11 @@ function Form(props: IProps) {
                 {/* end orgs select */}
                 {/* services, products select */}
                 <div className="flex-col input-wrap">
-                    <label className="required form-label">Sản phẩm, Dịch vụ được áp dụng</label>
-                    <Select
-                        labelId="demo-multiple-chip-label"
-                        id="demo-multiple-chip"
-                        multiple
-                        value={formik.values.items}
-                        onChange={(e) => {
-                            formik.setFieldValue("discount_value", "")
-                            formik.setFieldValue("items", e.target.value)
-                        }}
-                        name="items"
-                        renderValue={(selected: any) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected?.map((value: any, index: number) => {
-                                    const productableItem = JSON.parse(value)
-                                    return (
-                                        <div tabIndex={1} key={index} className="service-item-select">
-                                            {
-                                                productableItem &&
-                                                <SerProCard
-                                                    item={productableItem}
-                                                />
-                                            }
-                                        </div>
-                                    )
-                                })}
-                            </Box>
-                        )}
-                    >
-                        <input
-                            onChange={onChangeSearchServicesProducts}
-                            type="text"
-                            className="form-control form-control-solid"
-                            placeholder="Tìm kiếm dịch vụ..."
-                        />
-                        {serviceInit.concat(servicesOrgs.flat().slice(0, 6)).map((item: any, index: number) => (
-                            <MenuItem
-                                key={index}
-                                value={JSON.stringify(item)}
-                            >
-                                <div className="flex-row service-item">
-                                    <img src={item?.image_url} onError={(e) => onErrorImg(e)} alt="" className="service-item__img" />
-                                    <div className="flex-col detail">
-                                        <span className="name">{item?.service_name}</span>
-                                        <span className="price">
-                                            {formatPrice(item?.price)}đ
-                                        </span>
-                                        <div className="flex-row-al org">
-                                            <img src={item?.org?.image_url} alt="" className="org-img" />
-                                            <span className="org-name">{item?.org?.name}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </MenuItem>
-                        ))}
-                    </Select>
-                    {formik.errors.items && formik.touched.items && (
-                        <span className='text-danger'>
-                            {formik.errors.items}
-                        </span>
-                    )}
+                    <SelectService
+                        values={services}
+                        setValues={setServices}
+                        orgsChoose={orgsChoose}
+                    />
                 </div>
                 {/* end orgs select */}
                 <div className="flex-row-sp input-wrap">

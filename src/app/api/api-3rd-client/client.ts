@@ -1,8 +1,8 @@
 import axios from 'axios'
 import queryString from 'query-string'
 
-export const baseURL = 'https://api-node-myspa.vercel.app/v1'
-// export const baseURL = 'http://localhost:3001/v1'
+// export const baseURL = 'https://api-node-myspa.vercel.app/v1'
+export const baseURL = 'http://localhost:3004/v1'
 
 const axios3rdClient = axios.create({
     baseURL: baseURL,

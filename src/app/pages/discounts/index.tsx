@@ -15,6 +15,7 @@ import { ReqDiscount } from '@types';
 import { FormControl, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { PLAT_FORM_ARR } from 'app/util';
 import './style.scss'
+import  { identity, pickBy } from 'lodash';
 
 function Discounts() {
     const location = useLocation()
@@ -29,7 +30,7 @@ function Discounts() {
             limit: 10,
             'filter[platform]': query['filter[platform]'],
             'filter[discount_type]': query['filter[discount_type]'],
-            sort: '-created_at'
+            'sort': query.sort ?? '-created_at'
         })
     })
     const discounts: IDiscountPar[] = data?.data ?? []
@@ -74,12 +75,15 @@ function Discounts() {
                                 <tr className='fw-bold text-muted'>
                                     {/* <th className='min-w-120px'>Mã</th> */}
                                     <th className='min-w-150px'>Tiêu đề</th>
-                                    <th className='min-w-150px'>Mô tả</th>
+                                    <th className='min-w-80px'>Ưu tiên</th>
+                                    {/* <th className='min-w-150px'>Mô tả</th> */}
                                     <th className='min-w-150px'>Hình thức giảm</th>
                                     {/* <th className='min-w-150px'>Loại giảm giá</th> */}
-                                    <th className='min-w-150px'>Áp dụng từ ngày</th>
-                                    <th className='min-w-150px'>Đến ngày</th>
+                                    <th className='min-w-100px'>Từ ngày</th>
+                                    <th className='min-w-100px'>Đến ngày</th>
                                     <th className='min-w-100px text-end'>Nền tảng</th>
+                                    <th className='min-w-100px text-end'>Số lượng mã</th>
+                                    <th className='min-w-150px text-end'>Sử dụng/1 khách</th>
                                     <th className='min-w-100px text-end'>Actions</th>
                                 </tr>
                             </thead>
@@ -101,6 +105,9 @@ function Discounts() {
                                                     </div>
                                                     <div className='d-flex justify-content-start flex-column'>
                                                         <span className='text-dark fw-bold text-hover-primary fs-6'>
+                                                            {/* <a href='https://beautyx.vn' target='_blank' rel="noreferrer" >
+                                                                {item.title}
+                                                            </a> */}
                                                             {item.title}
                                                         </span>
                                                         <span className='text-muted fw-semobold text-muted d-block fs-7'>
@@ -110,10 +117,15 @@ function Discounts() {
                                                 </div>
                                             </td>
                                             <td>
+                                                <span className='text-dark text-center fw-bold d-block mb-1 fs-7'>
+                                                    {item.priority}
+                                                </span>
+                                            </td>
+                                            {/* <td>
                                                 <span className='text-muted fw-semobold text-muted d-block fs-7'>
                                                     {item.description}
                                                 </span>
-                                            </td>
+                                            </td> */}
                                             <td>
                                                 <div className='d-flex flex-column w-100 me-2'>
                                                     <DiscountsTypeElement
@@ -135,6 +147,16 @@ function Discounts() {
                                                 <FlatFormOrder
                                                     platForm={item.platform}
                                                 />
+                                            </td>
+                                            <td>
+                                                <span className='text-muted fw-semobold text-muted d-block fs-7'>
+                                                    {item.total ?? 'Không giới hạn'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span className='text-muted text-end fw-semobold text-muted d-block fs-7'>
+                                                    {item.limit ?? 'Không giới hạn'}
+                                                </span>
                                             </td>
                                             <td>
                                                 <div className='d-flex justify-content-end flex-shrink-0'>
@@ -192,24 +214,39 @@ function Discounts() {
     );
 }
 const Filter = ({ query }: { query: ReqDiscount }) => {
+    const sorts = [
+        {sort:'-created_at', title:'Ngày tạo'},
+        {sort:'-total', title:'Số lượng mã'},
+        {sort:'-priority', title:'Độ ưu tiên'},
+    ]
     const navigate = useNavigate()
     const location = useLocation()
     const handleChange = (event: SelectChangeEvent) => {
         const newQuery = {
             ...query,
             'page': 1,
-            'filter[platform]': event.target.value
+            'filter[platform]': event.target.value !== "" ? event.target.value:""
         }
         navigate({
             pathname: location.pathname,
-            search: queryString.stringify(newQuery)
+            search: queryString.stringify(pickBy(newQuery, identity))
         })
     };
     const onChangeType = (e: SelectChangeEvent) => {
         const newQuery: ReqDiscount = {
             ...query,
             'page': 1,
-            'filter[discount_type]': e.target.value
+            'filter[discount_type]': e.target.value !== "" ? e.target.value:""
+        }
+        navigate({
+            pathname: location.pathname,
+            search: queryString.stringify(pickBy(newQuery, identity))
+        })
+    }
+    const onChangeSort = (e:SelectChangeEvent)=>{
+        const newQuery:ReqDiscount = {
+            ...query,
+            'sort':e.target.value
         }
         navigate({
             pathname: location.pathname,
@@ -254,6 +291,23 @@ const Filter = ({ query }: { query: ReqDiscount }) => {
                             {
                                 PLAT_FORM_ARR.map(item => (
                                     <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
+                </div>
+                <div className="filter-row_platform">
+                    <label className="filter-row_label">Sắp xếp theo</label>
+                    <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
+                        <Select
+                            labelId="demo-select-small-label"
+                            id="demo-select-small"
+                            value={query.sort ?? sorts[0].sort}
+                            onChange={onChangeSort}
+                        >
+                            {
+                                sorts.map(item => (
+                                    <MenuItem key={item.sort} value={item.sort}>{item.title}</MenuItem>
                                 ))
                             }
                         </Select>

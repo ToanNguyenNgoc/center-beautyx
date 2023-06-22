@@ -1,4 +1,4 @@
-export const DOMAIN = 'https://api-node-myspa.vercel.app/v1'
+export const DOMAIN = 'https://beautyx.blackops.click/v1'
 export const API_ROUTE = {
   BANNERS: '/banners',
   BANNERS_ID: (id: number | string) => `/banners/${id}`,
