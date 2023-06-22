@@ -1,0 +1,1 @@
+{"version":3,"file":"static/js/337.b53096f5.chunk.js","mappings":"mIAUA,UARA,WACI,OACIA,EAAAA,EAAAA,KAAA,OAAAC,SAAK,SAIb,C","sources":["app/pages/users/index.tsx"],"sourcesContent":["import React from 'react';\n\nfunction Users() {\n    return (\n        <div>\n            Users\n        </div>\n    );\n}\n\nexport default Users;"],"names":["_jsx","children"],"sourceRoot":""}

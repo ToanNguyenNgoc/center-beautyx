@@ -1,0 +1,1 @@
+{"version":3,"file":"static/css/757.09920767.chunk.css","mappings":"AAAA,mBACI,yBACA,yBACI","sources":["app/pages/orders/style.scss"],"sourcesContent":[".search-input-wrap{\n    width: calc(100% - 124px);\n    input{\n        width: 50%;\n    }\n}"],"names":[],"sourceRoot":""}
