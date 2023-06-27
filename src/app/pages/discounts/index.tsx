@@ -28,6 +28,7 @@ function Discounts() {
         queryFn: () => discountsApi.getAll({
             page: query?.page ?? 1,
             limit: 10,
+            'filter[all]':true,
             'filter[platform]': query['filter[platform]'],
             'filter[discount_type]': query['filter[discount_type]'],
             'sort': query.sort ?? '-created_at'

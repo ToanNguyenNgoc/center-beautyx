@@ -100,5 +100,6 @@ export interface IDiscountPar {
     updated_at: string,
     items_count: number,
     organizations: IOrganization[],
-    items: IITEMS_DISCOUNT[]
+    items: IITEMS_DISCOUNT[],
+    is_campaign:boolean
 }

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { KEY } from 'common';
 import queryString from 'query-string'
 
 // export const baseURL = process.env.REACT_APP_API_URL_DEV;
@@ -11,7 +12,8 @@ const axiosClient = axios.create({
   },
   paramsSerializer: (params) => queryString.stringify(params),
 })
-axiosClient.interceptors.request.use(async (config) => {
+axiosClient.interceptors.request.use(async (config:any) => {
+  config.headers.Authorization = `Bearer ${KEY.TK}`
   return config
 })
 axios.interceptors.response.use(

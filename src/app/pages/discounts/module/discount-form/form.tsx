@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, MenuItem, Select, TextField } from '@mui/material';
+import { Box, Button, MenuItem, Select, TextField } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useFormik } from "formik";
 import { debounce } from "lodash";
@@ -25,7 +25,8 @@ import {
 } from 'app/util';
 import { useMessage } from 'app/hooks';
 import { useNavigate } from 'react-router-dom';
-import { SelectService } from './select-service'
+import { SelectService } from './select-service';
+import { ExportCode } from './export-code'
 
 
 interface IProps {
@@ -35,11 +36,11 @@ interface IProps {
 }
 
 function Form(props: IProps) {
-    const generateCode = moment().format('MMYYss')
+    const generateCode = moment().format('MMDDss')
     const { discount, isForm } = props;
     const { resultLoad, onCloseNoti, noti } = useMessage()
     const navigate = useNavigate()
-    const [isCampaign, setIsCampaign] = useState(false)
+    const [isCampaign, setIsCampaign] = useState(discount?.is_campaign ?? false)
     const [orgs, setOrgs] = useState<IOrganization[]>(discount?.organizations || [])
     const [services, setServices] = useState<any>(
         isForm === "EDIT" ?
@@ -65,12 +66,13 @@ function Form(props: IProps) {
     //[HANDLE POST]
     const { mutate, isLoading } = useMutation({
         mutationFn: (body: ReqDiscountBody) => discountsApi.postDiscount(body),
-        onSuccess: () => {
+        onSuccess: (data) => {
             resultLoad({
                 message: 'Tạo thành công',
                 color: 'success'
             })
-            setTimeout(() => navigate(-1), 2000)
+            const uuid = data.data?.context?.uuid
+            setTimeout(() => navigate(`/pages/discounts-form/${uuid}`), 2000)
         },
         onError: (error, variables, context) => {
             resultLoad({
@@ -125,6 +127,7 @@ function Form(props: IProps) {
                 platform: newValue.platform[0] ?? 'MOMO',
                 is_campaign: isCampaign ? 1 : 0
             }
+            // console.log(body)
             if (services.length > 0) {
                 mutate(body)
             }
@@ -200,7 +203,7 @@ function Form(props: IProps) {
                 onSubmit={formik.handleSubmit}
                 autoComplete="off"
             >
-                <div className="flex-row-sp input-wrap">
+                <div className="flex-row-sp align-items-center input-wrap">
                     <div className="wrap-item">
                         <XSwitch
                             value={isCampaign}
@@ -530,18 +533,19 @@ function Form(props: IProps) {
                             Khôi phục
                         </button>
                     } */}
+                    <LoadingButton
+                        loading={isLoading}
+                        type="submit"
+                        variant='contained'
+                        size="large"
+                        color="success"
+                        disabled={isForm === 'ADD' ? false : true}
+                    >
+                        Lưu thay đổi
+                    </LoadingButton>
                     {
-                        isForm === "ADD" &&
-                        <LoadingButton
-                            loading={isLoading}
-                            type="submit"
-                            variant='contained'
-                            size="large"
-                            color="success"
-                        // disabled
-                        >
-                            Lưu thay đổi
-                        </LoadingButton>
+                        discount &&
+                        <ExportCode discount={discount} />
                     }
                 </div>
             </form>

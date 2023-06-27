@@ -63,7 +63,7 @@ interface XSwitchProps {
 export const XSwitch = ({ label = "Default label", value = false, onChange }: XSwitchProps) => {
   return (
     <FormControlLabel
-      control={<IOSSwitch onChange={onChange} sx={{ m: 1 }} value={value} />}
+      control={<IOSSwitch onChange={onChange} sx={{ m: 1 }} value={value} checked={value} />}
       label={label}
     />
   )

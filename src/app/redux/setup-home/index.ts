@@ -16,7 +16,7 @@ export const fetchAsyncBanners:any = createAsyncThunk(
     "HOME_SETUP/fetchAsyncBanners",
     async () => {
         const res = await bannerApi.getAll()
-        return res.data.context.data
+        return res.data
     }
 )
 const setupHomeSlice = createSlice({

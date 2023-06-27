@@ -4,6 +4,7 @@ export const API_ROUTE = {
   BANNERS_ID: (id: number | string) => `/banners/${id}`,
   DISCOUNTS: '/discounts',
   DISCOUNTS_ID: (id: number | string) => `/discounts/${id}`,
+  CAMPAIGN_UUID:'/discounts/id/campaigncode',
   ORGANIZATIONS: '/organizations',
   ORGANIZATIONS_ID: (id: number | string) => `/organizations/${id}`,
   ROLES: '/roles',

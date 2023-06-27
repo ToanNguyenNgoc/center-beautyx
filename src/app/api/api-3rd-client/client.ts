@@ -2,7 +2,8 @@ import axios from 'axios'
 import queryString from 'query-string'
 
 // export const baseURL = 'https://api-node-myspa.vercel.app/v1'
-export const baseURL = 'http://localhost:3004/v1'
+export const baseURL = 'https://beautyx.blackops.click/v1'
+export const mediaBaseURL = 'https://beautyx-media.blackops.click'
 
 const axios3rdClient = axios.create({
     baseURL: baseURL,

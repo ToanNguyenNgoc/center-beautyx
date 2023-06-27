@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import style from './style.module.scss'
 import { API_3RD } from 'app/api/api-route'
-import { useFetchInfinite, useNoti, useSwr } from 'app/hooks'
+import { useFetchInfinite, useNoti, usePostMedia, useSwr } from 'app/hooks'
 import { FileUploader } from 'react-drag-drop-files'
 import { clst, postMedia } from 'app/util'
 import { IMGS } from '_metronic/assets/imgs/imgs'
@@ -107,11 +107,12 @@ const LoginRequest = ({ setToken }: { setToken: (tk: string) => void }) => {
 const Form = (props: any) => {
   const { response } = props
   const { resultLoad, firstLoad, noti, onCloseNoti } = useNoti()
+  const { handlePostMedia } = usePostMedia()
   const navigate = useNavigate()
   const res = response?.data?.data?.context
   const trend_item = {
     media_url_item: res?.media_url,
-    image_thumb_item: res?.image_thumb,
+    image_thumb: res?.image_thumb,
     content: res?.content,
     title: res?.title,
     organization_id: res?.organization_id,
@@ -123,7 +124,7 @@ const Form = (props: any) => {
   }
   const [media, setMedia] = useState({
     media_url: trend_item.media_url_item ? trend_item.media_url_item : '',
-    image_thumb: trend_item.image_thumb_item !== '' ? trend_item.image_thumb_item : '',
+    image_thumb: trend_item.image_thumb !== '' ? trend_item.image_thumb : '',
     load_media: false,
   })
   const handleChange = async (file: any) => {
@@ -135,6 +136,19 @@ const Form = (props: any) => {
       setMedia({ ...media, load_media: false })
     }
   }
+  const onChangeImage = (e: any) => {
+    const eF: any = {
+      target: {
+        files: e
+      }
+    }
+    handlePostMedia({
+      e: eF,
+      callBack(data) {
+        formik.setFieldValue('image_thumb', data[0]?.original_url ?? [])
+      },
+    })
+  }
   const formik = useFormik({
     initialValues: {
       title: trend_item.title ? trend_item.title : '',
@@ -144,21 +158,23 @@ const Form = (props: any) => {
       organization_image: trend_item.organization_image ? trend_item.organization_image : '',
       services: trend_item.services ? trend_item.services : [],
       trend_url: trend_item.trend_url ?? '',
-      media_url: trend_item.media_url ?? ''
+      media_url: trend_item.media_url ?? '',
+      image_thumb: trend_item.image_thumb ?? ''
     },
     onSubmit: (values) => {
       // console.log(values)
       postTrend()
     },
   })
+  console.log(trend_item)
 
   const PARAMS = {
     title: formik.values.title,
     content: formik.values.content,
     organization_id: formik.values.organization_id,
     cate_id: '6368691b49e2711b04bda0f4',
-    image_thumb: media.image_thumb ?? '',
     media_url: media.media_url,
+    image_thumb: formik.values.image_thumb,
     trend_url: formik.values.trend_url,
     services: formik.values.services?.map((i: any) => i.id),
   }
@@ -167,7 +183,7 @@ const Form = (props: any) => {
     try {
       const res = await request3rdApi.postTrend(PARAMS)
       if (res) resultLoad('Đăng thành công!')
-      navigate(-1)
+      // navigate(-1)
     } catch (error) {
       console.log(error)
       resultLoad('Có lỗi xảy ra !')
@@ -178,6 +194,7 @@ const Form = (props: any) => {
     const removeSer = formik.values.services.filter((el: IService) => el?.id !== item?.id)
     formik.setFieldValue('services', removeSer)
   }
+  console.log(formik.values.image_thumb)
 
   return (
     <div className={style.form_cnt}>
@@ -214,6 +231,33 @@ const Form = (props: any) => {
               </div>
             }
           />
+        </div>
+        <div className={style.form_media_right}>
+          <label className='form-label'>
+            <span className='required'>Image thumbnail</span>
+          </label>
+          <div className={style.form_media_image}>
+            <FileUploader
+              multiple={true}
+              handleChange={onChangeImage}
+              name='file'
+              className={style.media_cnt}
+              children={
+                <div className={style.media_form_input}>
+                  {formik.values.image_thumb ? (
+                    <img className={style.video_review} src={formik.values.image_thumb} alt="" />
+                  ) : (
+                    <div className={style.media_form_input_place}>
+                      <img src={IMGS.imgPlaceHolder} alt='' />
+                      <div>
+                        Kéo thả hình ảnh vào đây hoặc Click để chọn hình ảnh
+                      </div>
+                    </div>
+                  )}
+                </div>
+              }
+            />
+          </div>
         </div>
       </div>
       <form onSubmit={formik.handleSubmit} className={style.form_content}>

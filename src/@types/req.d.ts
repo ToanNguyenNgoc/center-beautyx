@@ -23,9 +23,15 @@ export type ReqDiscount = {
   'filter[organization_id]'?: number | string;
   'filter[location]'?: string;
   'sort'?: string;
+  'filter[all]'?:boolean;
   'append'?: "" | "user_available_purchase_count"
 }
 export type ReqDiscountDetail = {
   id: string;
   'filter[organization_id]'?: number | string
+}
+export type ReqDiscountCode = {
+  'page'?:number|string;
+  'limit'?:number|string;
+  'uuid'?:string
 }
