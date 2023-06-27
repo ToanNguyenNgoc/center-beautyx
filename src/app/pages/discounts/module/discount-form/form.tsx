@@ -72,7 +72,7 @@ function Form(props: IProps) {
                 color: 'success'
             })
             const uuid = data.data?.context?.uuid
-            setTimeout(() => navigate(`/pages/discounts-form/${uuid}`), 2000)
+            setTimeout(() => navigate(-1), 2000)
         },
         onError: (error, variables, context) => {
             resultLoad({
