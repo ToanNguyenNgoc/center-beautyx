@@ -1,16 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // import Draggable from 'react-draggable';
-import React, { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { IRoot } from "../../redux/interface";
+import React, { FC, useState } from "react";
 import './style.scss';
-import { STATUS } from "../../redux/status";
-import { fetchAsyncBanner, onResetFormBanner, onSortTableBanner } from "../../redux/banner/bannerSlice";
-import { IBanner } from "../../interface/banner";
-import dragCustom from "../../util/draggableImport";
 import { Link } from "react-router-dom";
-import TitlePage from "../../../components/TitlePage";
-import { KTSVG, toAbsoluteUrl } from "../../../_metronic/helpers";
 import {
     SortableContainer,
     SortableContainerProps,
@@ -19,43 +11,59 @@ import {
     SortableHandle
 } from "react-sortable-hoc";
 import { arrayMoveImmutable } from "array-move";
-import { formatDate } from "../../util/format";
-import { BannerTypeElement } from "../../util/fileType";
 import { useVerifyRoute } from "app/hooks";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { QR_KEY } from "common";
+import bannerApi from "app/api/bannerApi";
+import { IBanner } from "app/interface";
+import TitlePage from "components/TitlePage";
+import { KTSVG, toAbsoluteUrl } from "_metronic/helpers";
+import { BannerTypeElement, formatDate } from "app/util";
 
 function BannerWidget(props: any) {
-    const { banner, status } = useSelector((state: IRoot) => state.BANNER);
-    const banners: IBanner[] = banner.data;
-    const bannerItemRef = useRef<any>();
-    const dispatch = useDispatch();
-    async function handleInitData() {
-        dispatch(fetchAsyncBanner());
-    }
     const { METHOD } = useVerifyRoute()
-    useEffect(() => {
-        (banner.totalItem <= 0 && status !== STATUS.SUCCESS) && handleInitData()
-        dragCustom();
-        dispatch(onResetFormBanner())
-    }, [])
+    const [banners, setBanners] = useState<IBanner[]>([])
+    const qrClient = useQueryClient()
+    const { } = useQuery({
+        queryKey: [QR_KEY.BANNER],
+        queryFn: () => bannerApi.banners(),
+        onSuccess(data) {
+            setBanners(data.data)
+        },
+    })
+    const onSortEnd = (oldIndex: number, newIndex: number) => {
+        setBanners(arrayMoveImmutable(banners, oldIndex, newIndex))
+    }
+    const { mutate: mutateDelete } = useMutation({
+        mutationFn: (id: number) => bannerApi.deleteBanner(id),
+        onSuccess: () => {
+            qrClient.invalidateQueries({ queryKey: [QR_KEY.BANNER] })
+        },
+        onError: () => {
+
+        }
+    })
+    const onDeleteBanner = (id:number) => mutateDelete(id)
+
 
     return (
         <>
             <TitlePage
                 element={
                     // METHOD?.includes("POST") ?
-                        <Link
-                            to={{ pathname: "/pages/banners-form" }}
-                            className="btn btn-sm btn-primary"
-                        >
-                            Tạo mới
-                        </Link>
-                        // :
-                        // <></>
+                    <Link
+                        to={{ pathname: "/pages/banners-form" }}
+                        className="btn btn-sm btn-primary"
+                    >
+                        Tạo mới
+                    </Link>
+                    // :
+                    // <></>
                 }
                 title="Danh sách banners"
             />
             <div className="row g-5 gx-xxl-8 table-banner">
-                <div ref={bannerItemRef} className={`card mb-5 mb-xl-8`}>
+                <div className={`card mb-5 mb-xl-8`}>
                     <div className='card-header border-0 pt-5'>
                         <h3 className='card-title align-items-start flex-column'>
                             <span className='card-label fw-bold fs-3 mb-1'>Banners Campaigns</span>
@@ -87,6 +95,8 @@ function BannerWidget(props: any) {
                                 {/* end::Table head */}
                                 {/* begin::Table body */}
                                 <SortableComponent
+                                    onSortEnd={onSortEnd}
+                                    onDeleteBanner={onDeleteBanner}
                                     banners={banners}
                                 />
                                 {/* end::Table body */}
@@ -102,6 +112,12 @@ function BannerWidget(props: any) {
     )
 }
 export default BannerWidget;
+
+interface SortableComponentProps {
+    banners: IBanner[]
+    onSortEnd: (oldIndex: number, newIndex: number) => void
+    onDeleteBanner:(id:number) => void
+}
 
 interface ISortableItem extends SortableElementProps {
     children: React.ReactNode
@@ -132,12 +148,9 @@ const DndTrigger: React.ComponentClass<ISortableHandleElement, any> = SortableHa
         <div className={className || ''}>{children}</div>
     )
 )
-const SortableComponent = (props: any) => {
-    const { banners } = props;
-    const dispatch = useDispatch();
-
-    const onSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void => {
-        dispatch(onSortTableBanner(arrayMoveImmutable(banners, oldIndex, newIndex)))
+const SortableComponent: FC<SortableComponentProps> = ({ banners, onSortEnd, onDeleteBanner }) => {
+    const handleSortEnd = ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void => {
+        onSortEnd(oldIndex, newIndex)
     }
     // const { METHOD } = useVerifyRoute()
     return (
@@ -145,7 +158,7 @@ const SortableComponent = (props: any) => {
             lockAxis="y"
             lockToContainerEdges={true}
             useDragHandle
-            onSortEnd={onSortEnd}
+            onSortEnd={handleSortEnd}
 
         >
             {banners.map((item: IBanner, index: number) => (
@@ -204,15 +217,15 @@ const SortableComponent = (props: any) => {
                                     <KTSVG path='/media/icons/duotune/art/art005.svg' className='svg-icon-3' />
                                 </Link>
                             }
-                            <Link
-                                to='#'
+                            <button
+                                onClick={() => onDeleteBanner(item.id)}
                                 className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
                             >
                                 <KTSVG
                                     path='/media/icons/duotune/general/gen027.svg'
                                     className='svg-icon-3'
                                 />
-                            </Link>
+                            </button>
                         </div>
                     </td>
                 </SortableItem>

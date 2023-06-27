@@ -27,8 +27,8 @@ function Discounts() {
         queryKey: [QR_KEY.DISCOUNT_PAGE, query],
         queryFn: () => discountsApi.getAll({
             page: query?.page ?? 1,
-            limit: 10,
-            'filter[all]':true,
+            limit: 15,
+            'filter[filter_all]':true,
             'filter[platform]': query['filter[platform]'],
             'filter[discount_type]': query['filter[discount_type]'],
             'sort': query.sort ?? '-created_at'
