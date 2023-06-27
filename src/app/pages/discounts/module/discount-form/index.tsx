@@ -45,3 +45,4 @@ function DiscountForm() {
 }
 
 export default DiscountForm;
+export * from './export-code'

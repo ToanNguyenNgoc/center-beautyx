@@ -15,7 +15,8 @@ import { ReqDiscount } from '@types';
 import { FormControl, MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { PLAT_FORM_ARR } from 'app/util';
 import './style.scss'
-import  { identity, pickBy } from 'lodash';
+import { identity, pickBy } from 'lodash';
+import { ExportCode } from './module/discount-form'
 
 function Discounts() {
     const location = useLocation()
@@ -28,7 +29,7 @@ function Discounts() {
         queryFn: () => discountsApi.getAll({
             page: query?.page ?? 1,
             limit: 10,
-            'filter[all]':true,
+            'filter[filter_all]': true,
             'filter[platform]': query['filter[platform]'],
             'filter[discount_type]': query['filter[discount_type]'],
             'sort': query.sort ?? '-created_at'
@@ -160,7 +161,7 @@ function Discounts() {
                                                 </span>
                                             </td>
                                             <td>
-                                                <div className='d-flex justify-content-end flex-shrink-0'>
+                                                <div className='d-flex justify-content-end flex-shrink-0 tb-control'>
                                                     {
                                                         METHOD?.includes("GET_BY_ID") &&
                                                         <Link
@@ -187,7 +188,15 @@ function Discounts() {
                                                             <KTSVG path='/media/icons/duotune/art/art005.svg' className='svg-icon-3' />
                                                         </Link>
                                                     }
-                                                    <Link
+                                                    {
+                                                        (item.platform === 'SHOPEE' || item.platform === 'VINID') &&
+                                                        <ExportCode
+                                                            title=''
+                                                            size="small"
+                                                            discount={item}
+                                                        />
+                                                    }
+                                                    {/* <Link
                                                         to='#'
                                                         className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
                                                     >
@@ -195,7 +204,7 @@ function Discounts() {
                                                             path='/media/icons/duotune/general/gen027.svg'
                                                             className='svg-icon-3'
                                                         />
-                                                    </Link>
+                                                    </Link> */}
                                                 </div>
                                             </td>
                                         </tr>
@@ -216,9 +225,9 @@ function Discounts() {
 }
 const Filter = ({ query }: { query: ReqDiscount }) => {
     const sorts = [
-        {sort:'-created_at', title:'Ngày tạo'},
-        {sort:'-total', title:'Số lượng mã'},
-        {sort:'-priority', title:'Độ ưu tiên'},
+        { sort: '-created_at', title: 'Ngày tạo' },
+        { sort: '-total', title: 'Số lượng mã' },
+        { sort: '-priority', title: 'Độ ưu tiên' },
     ]
     const navigate = useNavigate()
     const location = useLocation()
@@ -226,7 +235,7 @@ const Filter = ({ query }: { query: ReqDiscount }) => {
         const newQuery = {
             ...query,
             'page': 1,
-            'filter[platform]': event.target.value !== "" ? event.target.value:""
+            'filter[platform]': event.target.value !== "" ? event.target.value : ""
         }
         navigate({
             pathname: location.pathname,
@@ -237,17 +246,17 @@ const Filter = ({ query }: { query: ReqDiscount }) => {
         const newQuery: ReqDiscount = {
             ...query,
             'page': 1,
-            'filter[discount_type]': e.target.value !== "" ? e.target.value:""
+            'filter[discount_type]': e.target.value !== "" ? e.target.value : ""
         }
         navigate({
             pathname: location.pathname,
             search: queryString.stringify(pickBy(newQuery, identity))
         })
     }
-    const onChangeSort = (e:SelectChangeEvent)=>{
-        const newQuery:ReqDiscount = {
+    const onChangeSort = (e: SelectChangeEvent) => {
+        const newQuery: ReqDiscount = {
             ...query,
-            'sort':e.target.value
+            'sort': e.target.value
         }
         navigate({
             pathname: location.pathname,

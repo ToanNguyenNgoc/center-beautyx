@@ -11,10 +11,12 @@ import moment from "moment";
 import { slugify } from "app/util";
 
 interface Props {
-  discount: IDiscountPar
+  discount: IDiscountPar,
+  title?: string,
+  size?:"small" | "medium" | "large"
 }
 
-export const ExportCode: FC<Props> = ({ discount }) => {
+export const ExportCode: FC<Props> = ({ discount, title = ' Xuất mã giảm giá', size='medium' }) => {
   const [totalPage, setTotalPage] = useState(1)
   const limit = 30
   const [codes, setCodes] = useState<Array<string>>([])
@@ -56,14 +58,14 @@ export const ExportCode: FC<Props> = ({ discount }) => {
     <>
       <LoadingButton
         color="success"
-        size="large"
+        size={size}
         variant="contained"
         onClick={onGetCode}
         type="button"
         loading={isLoading}
       >
         <i style={{ marginRight: '4px', color: 'var(--kt-white)' }} className="bi bi-download"></i>
-        Xuất mã giảm giá
+        {title}
       </LoadingButton>
     </>
   )
@@ -90,7 +92,7 @@ const onExportFile = ({ file_name, codes }: { file_name: string, codes: Array<st
   // Define column widths
   const columnWidths = [
     { wch: 8 }, // Width of column 3 (8 characters)
-    { wch: 25 },
+    { wch: 45 },
   ];
 
   // Set column widths in the worksheet
