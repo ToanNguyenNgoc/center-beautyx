@@ -1,9 +1,9 @@
+import { AUTH_LOCAL_TOKEN } from 'app/modules/auth';
 import axios from 'axios'
-import { KEY } from 'common';
 import queryString from 'query-string'
 
-// export const baseURL = process.env.REACT_APP_API_URL_DEV;
-export const baseURL = process.env.REACT_APP_API_URL ?? process.env.REACT_APP_API_LIVE
+export const baseURL = process.env.REACT_APP_API_URL_DEV;
+// export const baseURL = process.env.REACT_APP_API_URL ?? process.env.REACT_APP_API_LIVE
 const axiosClient = axios.create({
   baseURL: baseURL,
   headers: {
@@ -12,8 +12,10 @@ const axiosClient = axios.create({
   },
   paramsSerializer: (params) => queryString.stringify(params),
 })
-axiosClient.interceptors.request.use(async (config:any) => {
-  config.headers.Authorization = `Bearer ${KEY.TK}`
+axiosClient.interceptors.request.use(async (config: any) => {
+  const session = window.sessionStorage.getItem(AUTH_LOCAL_TOKEN);
+  const local = localStorage.getItem(AUTH_LOCAL_TOKEN)
+  config.headers.Authorization = `Bearer ${session ?? local}`
   return config
 })
 axios.interceptors.response.use(
