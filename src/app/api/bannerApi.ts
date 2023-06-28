@@ -9,14 +9,14 @@ class BannerApi {
       "page": 1,
       "limit": 15,
       "platform": "MOMO",
-      "include": "origin",
+      // "include": "origin",
       "sort": "-created_at",
     };
     return axiosClient.get(API_ROUTE.BANNERS, { params });
   };
   getDetailById = (id: number) => {
     const params = {
-      "include": "origin",
+      // "include": "origin",
     }
     return axiosClient.get(API_ROUTE.BANNERS_ID(id), { params })
   }

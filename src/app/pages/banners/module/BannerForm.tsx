@@ -17,6 +17,7 @@ import BannerAddRender from './BannerAddRender';
 import { DesktopDatePicker } from '@mui/x-date-pickers';
 import { TextField } from '@mui/material';
 import { format } from "date-fns";
+import { LoadingButton } from '@mui/lab';
 
 interface IProps {
     bannerDetail: IBanner,
@@ -78,7 +79,7 @@ function BannerForm(props: IProps) {
     const handlePostBanner = () => {
         const values = {
             name: bannerDetail.name,
-            imageURL: bannerDetail.imageURL,
+            imageURL: 'https://i.imgur.com/3dGthGD.png',
             type: bannerDetail.type,
             platform: bannerDetail.platform,
             htmlTemplate: bannerDetail.htmlTemplate,
@@ -89,25 +90,26 @@ function BannerForm(props: IProps) {
         dispatch(postAsyncBanner(values))
     }
     const onPostBanner = () => {
-        if (bannerDetail.name !== "" && bannerDetail.imageURL !== "") {
-            if (bannerDetail.type === BANNER_TYPE.HTML && bannerDetail.htmlTemplate !== "") {
-                //console.log(bannerDetail)
-                handlePostBanner()
-            }
-            if ((bannerDetail.type === BANNER_TYPE.WEB ||
-                bannerDetail.type === BANNER_TYPE.SEARCH_RESULT ||
-                bannerDetail.type === BANNER_TYPE.VIDEO) &&
-                bannerDetail.url !== "") {
-                //console.log(bannerDetail)
-                handlePostBanner()
-            }
-            if ((bannerDetail.type === BANNER_TYPE.ORGANIZATION ||
-                bannerDetail.type === BANNER_TYPE.DISCOUNT) &&
-                bannerDetail.origin_id) {
-                //console.log(bannerDetail)
-                handlePostBanner()
-            }
-        }
+        // if (bannerDetail.name !== "" && bannerDetail.imageURL !== "") {
+        //     if (bannerDetail.type === BANNER_TYPE.HTML && bannerDetail.htmlTemplate !== "") {
+        //         //console.log(bannerDetail)
+        //         handlePostBanner()
+        //     }
+        //     if ((bannerDetail.type === BANNER_TYPE.WEB ||
+        //         bannerDetail.type === BANNER_TYPE.SEARCH_RESULT ||
+        //         bannerDetail.type === BANNER_TYPE.VIDEO) &&
+        //         bannerDetail.url !== "") {
+        //         //console.log(bannerDetail)
+        //         handlePostBanner()
+        //     }
+        //     if ((bannerDetail.type === BANNER_TYPE.ORGANIZATION ||
+        //         bannerDetail.type === BANNER_TYPE.DISCOUNT) &&
+        //         bannerDetail.origin_id) {
+        //         //console.log(bannerDetail)
+        //         handlePostBanner()
+        //     }
+        // }
+        handlePostBanner()
     }
     return (
         <div className='post d-flex flex-column-fluid' id="kt_post">
@@ -128,16 +130,16 @@ function BannerForm(props: IProps) {
                             children={
                                 <div className='banner-form__img'>
                                     {
-                                    bannerDetail.imageURL !== "" ?
-                                        <img src={bannerDetail.imageURL} alt="" className="img-temp" />
-                                        :
-                                        <div className="flex-col-al banner-form__img-place">
-                                            <img src={IMGS.imgPlaceHolder} alt="" />
-                                            <span>
-                                                {loadImg ? "Đang tải lên..." : "Kéo thả hình ảnh vào đây hoặc Click để chọn hình ảnh"}
-                                            </span>
-                                        </div>
-                                }
+                                        bannerDetail.imageURL !== "" ?
+                                            <img src={bannerDetail.imageURL} alt="" className="img-temp" />
+                                            :
+                                            <div className="flex-col-al banner-form__img-place">
+                                                <img src={IMGS.imgPlaceHolder} alt="" />
+                                                <span>
+                                                    {loadImg ? "Đang tải lên..." : "Kéo thả hình ảnh vào đây hoặc Click để chọn hình ảnh"}
+                                                </span>
+                                            </div>
+                                    }
                                 </div>
                             }
                         />
@@ -186,16 +188,20 @@ function BannerForm(props: IProps) {
                         <div className="input-form__bot">
                             {
                                 params?.id &&
-                                <button onClick={onRestoreFormEdit} className="btn btn-light">
+                                <LoadingButton
+                                    variant='contained'
+                                    onClick={onRestoreFormEdit}
+                                >
                                     Khôi phục
-                                </button>
+                                </LoadingButton>
                             }
-                            <button
+                            <LoadingButton
+                                variant='contained'
+                                color='success'
                                 onClick={onPostBanner}
-                                className="btn btn-success"
                             >
                                 Lưu thay đổi
-                            </button>
+                            </LoadingButton>
                         </div>
                     </div>
                 </div>
