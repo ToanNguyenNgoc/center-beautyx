@@ -71,7 +71,7 @@ function Form(props: IProps) {
                 message: 'Tạo thành công',
                 color: 'success'
             })
-            const uuid = data.data?.context?.uuid
+            // const uuid = data.data?.context?.uuid
             setTimeout(() => navigate(-1), 2000)
         },
         onError: (error, variables, context) => {
