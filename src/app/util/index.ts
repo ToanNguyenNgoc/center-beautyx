@@ -8,4 +8,5 @@ export * from './format'
 export * from './scrollTop'
 export * from './postMedia'
 export * from './classStyle'
-export * from "./platForm"
+export * from './platForm'
+export * from './regex'

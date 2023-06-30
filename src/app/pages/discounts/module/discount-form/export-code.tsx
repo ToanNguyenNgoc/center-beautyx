@@ -2,7 +2,7 @@
 import { LoadingButton } from "@mui/lab";
 import { ReqDiscountCode } from "@types";
 import { discountsApi } from "app/api";
-import { IDiscountPar } from "app/interface";
+import { ICouponCodeCampaign, IDiscountPar } from "app/interface";
 import { FC, useEffect, useState } from "react";
 import { useMutation } from "react-query";
 import * as FileSaver from "file-saver";
@@ -11,13 +11,15 @@ import moment from "moment";
 import { slugify } from "app/util";
 
 interface Props {
-  discount: IDiscountPar
+  discount: IDiscountPar,
+  title?: string,
+  size?: "small" | "medium" | "large"
 }
 
-export const ExportCode: FC<Props> = ({ discount }) => {
+export const ExportCode: FC<Props> = ({ discount, title = ' Xuất mã giảm giá', size = 'medium' }) => {
   const [totalPage, setTotalPage] = useState(1)
   const limit = 30
-  const [codes, setCodes] = useState<Array<string>>([])
+  const [codes, setCodes] = useState<ICouponCodeCampaign[]>([])
   const { mutate, data, isLoading } = useMutation({
     mutationKey: ['GET_CODE', discount.uuid],
     mutationFn: (qr: ReqDiscountCode) => discountsApi.getCodeIsCampaign({
@@ -46,6 +48,7 @@ export const ExportCode: FC<Props> = ({ discount }) => {
   }, [totalPage])
   useEffect(() => {
     if (codes.length === data?.total) {
+      // console.log(codes)
       onExportFile({
         file_name: slugify(discount.title),
         codes: codes
@@ -56,40 +59,36 @@ export const ExportCode: FC<Props> = ({ discount }) => {
     <>
       <LoadingButton
         color="success"
-        size="large"
+        size={size}
         variant="contained"
         onClick={onGetCode}
         type="button"
         loading={isLoading}
       >
         <i style={{ marginRight: '4px', color: 'var(--kt-white)' }} className="bi bi-download"></i>
-        Xuất mã giảm giá
+        {title}
       </LoadingButton>
     </>
   )
 }
-const onExportFile = ({ file_name, codes }: { file_name: string, codes: Array<string> }) => {
+const onExportFile = ({ file_name, codes }: { file_name: string, codes: ICouponCodeCampaign[] }) => {
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
   // Create an array of data with custom color and additional text
-  const apiData = codes.map((i) => {
-    return {
-      code: i
-    };
-  });
 
   // Create an array for the title row
-  const titleRow = ['STT', 'Danh sách mã']; // Replace with your actual titles
+  const titleRow = ['STT', 'Danh sách mã', 'Trạng thái sử dụng']; // Replace with your actual titles
 
   // Add the title row to the beginning of the data array
-  const dataWithTitles = [titleRow, ...apiData.map((item, i) => [i + 1, item.code])];
+  const dataWithTitles = [titleRow, ...codes.map((item, i) => [i + 1, item.coupon_code, item.status === "1" ? "Chưa sử dụng" : "Đã sử dụng"])];
 
   // Convert the data array to a worksheet
   const ws = XLSX.utils.aoa_to_sheet(dataWithTitles);
   // Define column widths
   const columnWidths = [
     { wch: 8 }, // Width of column 3 (8 characters)
+    { wch: 35 },
     { wch: 25 },
   ];
 

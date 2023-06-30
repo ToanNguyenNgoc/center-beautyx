@@ -48,7 +48,7 @@ export const fetchAsyncBannerDetail: any = createAsyncThunk(
     const res = await bannerApi.getDetailById(id);
     return {
       ...initBanner,
-      ...res.data.context
+      ...res.context
     }
   }
 )

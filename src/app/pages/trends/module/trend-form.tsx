@@ -147,6 +147,7 @@ const Form = (props: any) => {
       callBack(data) {
         formik.setFieldValue('image_thumb', data[0]?.original_url ?? [])
       },
+      version:'media.beautyx'
     })
   }
   const formik = useFormik({

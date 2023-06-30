@@ -78,7 +78,7 @@ export interface IDiscountChild {
 }
 export interface IDiscountPar {
     id: number,
-    uuid:string,
+    uuid: string,
     title: string,
     description: string,
     coupon_code: string,
@@ -101,5 +101,9 @@ export interface IDiscountPar {
     items_count: number,
     organizations: IOrganization[],
     items: IITEMS_DISCOUNT[],
-    is_campaign:boolean
+    is_campaign: boolean
+}
+export interface ICouponCodeCampaign {
+    coupon_code: string;
+    status: string
 }

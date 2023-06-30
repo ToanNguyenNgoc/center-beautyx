@@ -54,5 +54,5 @@ class Organization {
         }
     }
 }
-const orgApi = new Organization();
+export const orgApi = new Organization();
 export default orgApi;

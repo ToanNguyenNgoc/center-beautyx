@@ -2,7 +2,7 @@
 // import Draggable from 'react-draggable';
 import React, { FC, useState } from "react";
 import './style.scss';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
     SortableContainer,
     SortableContainerProps,
@@ -11,7 +11,7 @@ import {
     SortableHandle
 } from "react-sortable-hoc";
 import { arrayMoveImmutable } from "array-move";
-import { useVerifyRoute } from "app/hooks";
+// import { useVerifyRoute } from "app/hooks";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { QR_KEY } from "common";
 import bannerApi from "app/api/bannerApi";
@@ -19,12 +19,15 @@ import { IBanner } from "app/interface";
 import TitlePage from "components/TitlePage";
 import { KTSVG, toAbsoluteUrl } from "_metronic/helpers";
 import { BannerTypeElement, formatDate } from "app/util";
+import moment from "moment";
+import { Button } from "@mui/material";
 
 function BannerWidget(props: any) {
-    const { METHOD } = useVerifyRoute()
+    const navigate = useNavigate()
+    // const { METHOD } = useVerifyRoute()
     const [banners, setBanners] = useState<IBanner[]>([])
     const qrClient = useQueryClient()
-    const { } = useQuery({
+    useQuery({
         queryKey: [QR_KEY.BANNER],
         queryFn: () => bannerApi.banners(),
         onSuccess(data) {
@@ -43,22 +46,23 @@ function BannerWidget(props: any) {
 
         }
     })
-    const onDeleteBanner = (id:number) => mutateDelete(id)
+    const onDeleteBanner = (id: number) => mutateDelete(id)
 
 
     return (
         <>
             <TitlePage
                 element={
-                    // METHOD?.includes("POST") ?
-                    <Link
-                        to={{ pathname: "/pages/banners-form" }}
-                        className="btn btn-sm btn-primary"
+                    // METHOD?.includes("POST") &&
+                    <Button
+                        onClick={() => navigate('/pages/banners-form', {
+                            state: banners[0]?.priority
+                        })}
+                        variant="contained"
+                        size="large"
                     >
-                        Tạo mới
-                    </Link>
-                    // :
-                    // <></>
+                        Tạo mới banner
+                    </Button>
                 }
                 title="Danh sách banners"
             />
@@ -86,6 +90,7 @@ function BannerWidget(props: any) {
                                             </div>
                                         </th>
                                         <th className='min-w-150px'>Banner</th>
+                                        {/* <th className='min-w-50px'>Độ ưu tiên</th> */}
                                         <th className='min-w-140px'>Loại</th>
                                         <th className='min-w-140px'>Ngày hết hạn</th>
                                         <th className='min-w-140px'>Nền tảng</th>
@@ -116,7 +121,7 @@ export default BannerWidget;
 interface SortableComponentProps {
     banners: IBanner[]
     onSortEnd: (oldIndex: number, newIndex: number) => void
-    onDeleteBanner:(id:number) => void
+    onDeleteBanner: (id: number) => void
 }
 
 interface ISortableItem extends SortableElementProps {
@@ -189,6 +194,11 @@ const SortableComponent: FC<SortableComponentProps> = ({ banners, onSortEnd, onD
                             </div>
                         </div>
                     </td>
+                    {/* <td>
+                        <span className='text-dark fw-bold text-hover-primary fs-6'>
+                            {item.priority}
+                        </span>
+                    </td> */}
                     <td>
                         <BannerTypeElement
                             TYPE={item.type}
@@ -196,7 +206,7 @@ const SortableComponent: FC<SortableComponentProps> = ({ banners, onSortEnd, onD
                     </td>
                     <td>
                         <span className='text-dark fw-bold text-hover-primary d-block fs-6'>
-                            {"Không thời hạn"}
+                            {item.expires_at ? moment(item.expires_at).format('DD/MM/YYYY') : 'Không thời hạn'}
                         </span>
                     </td>
                     <td>

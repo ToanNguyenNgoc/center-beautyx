@@ -1,7 +1,10 @@
-import axios3rdClient from "./client";
+import axios from "axios";
+import axios3rdClient, { mediaBaseURL } from "./client";
 
 const token = localStorage.getItem('3rd-auth')
 class Request {
+    mediaCloud = (formData: FormData) => axios.post(`${mediaBaseURL}/media/cloud`, formData)
+    media = (formData: FormData) => axios.post(`${mediaBaseURL}/media`, formData)
     postTrend = (values: any) => {
         return axios3rdClient.post('/trends', values, {
             headers: {
@@ -13,5 +16,5 @@ class Request {
         return axios3rdClient.get(`/tiktok/refresh_comment/${id}`)
     }
 }
-const request3rdApi = new Request();
+export const request3rdApi = new Request();
 export default request3rdApi

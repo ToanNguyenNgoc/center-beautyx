@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from "react";
-import axios from "axios";
-import { mediaBaseURL } from "app/api/api-3rd-client/client";
+import { request3rdApi } from "app/api/api-3rd-client";
+import { mediaApi } from "app/api";
 
 type Media = {
   mediaId: number;
@@ -9,13 +9,16 @@ type Media = {
 
 type PostType = {
   e: ChangeEvent<HTMLInputElement>,
-  callBack?: (data: Media[]) => void
+  callBack?: (data: Media[]) => void,
+  version?: 'myspa' | 'media.beautyx' | 'media.beautyx/cloud'
 }
 
 export function usePostMedia() {
   const [medias, setMedias] = useState<Media[]>([])
-  const handlePostMedia = async ({ e, callBack }: PostType) => {
+  const [isLoading, setIsLoading] = useState(false)
+  const handlePostMedia = async ({ e, callBack, version = 'myspa' }: PostType) => {
     if (e.target.files) {
+      setIsLoading(true)
       try {
         const mediaList: Media[] = []
         for (var i = 0; i < e.target.files?.length; i++) {
@@ -26,11 +29,16 @@ export function usePostMedia() {
             mediaId: i
           }
           formData.append('file', fileItem)
-          const res: any = await axios.post(`${mediaBaseURL}/media`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          })
+          let res: any
+          if (version === 'media.beautyx') {
+            res = await request3rdApi.media(formData)
+          }
+          if (version === 'media.beautyx/cloud') {
+            res = await request3rdApi.mediaCloud(formData)
+          }
+          if (version === 'myspa') {
+            res = await mediaApi.postMedia(formData).then(res => res.data.context)
+          }
           if (res) {
             resMedia = {
               original_url: res.original_url,
@@ -40,6 +48,7 @@ export function usePostMedia() {
           mediaList.push(resMedia)
         }
         setMedias(mediaList)
+        setIsLoading(false)
         if (callBack) {
           callBack(mediaList)
         }
@@ -50,6 +59,7 @@ export function usePostMedia() {
   }
   return {
     medias,
-    handlePostMedia
+    handlePostMedia,
+    isLoading
   }
 }

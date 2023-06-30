@@ -2,7 +2,7 @@ import axiosClient from "./axios"
 import { AUTH_HEADER } from "./config_header"
 import { API_ROUTE } from "./api-route";
 import { pickBy, identity } from "lodash"
-import { ResponseList } from "@types";
+import { ResponseDetail, ResponseList } from "@types";
 import { IBanner } from "app/interface";
 
 class BannerApi {
@@ -22,21 +22,21 @@ class BannerApi {
       "page": 1,
       "limit": 15,
       "platform": "MOMO",
-      "include": "origin",
+      // "include": "origin",
       "sort": "-created_at",
     };
     return axiosClient.get(API_ROUTE.BANNERS, { params });
   };
-  getDetailById = (id: number) => {
-    const params = {
-      "include": "origin",
-    }
-    return axiosClient.get(API_ROUTE.BANNERS_ID(id), { params })
+  getDetailById = (id: number | string) => {
+    return axiosClient.get(API_ROUTE.BANNERS_ID(id)).then<ResponseDetail<IBanner>>(res => res.data)
   }
   postBanner = (values: any) => {
     const params = pickBy(values, identity)
     return axiosClient.post(API_ROUTE.BANNERS, params, AUTH_HEADER())
   }
+  putBanner = (id: number | string, values: any) => {
+    return axiosClient.put(API_ROUTE.BANNERS_ID(id), pickBy(values, identity))
+  }
 }
-const bannerApi = new BannerApi();
+export const bannerApi = new BannerApi();
 export default bannerApi;

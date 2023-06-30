@@ -1,2 +1,5 @@
 export * from './approveApi'
 export * from './discounts'
+export * from './bannerApi'
+export * from './orgApi'
+export * from './mediaApi'
