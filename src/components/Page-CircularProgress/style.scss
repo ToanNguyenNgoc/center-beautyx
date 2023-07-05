@@ -1,0 +1,10 @@
+.container-load{
+  width: 100%;
+  min-height: calc(80vh - 200px);
+  height: calc(100% + 32px);
+  background-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

@@ -104,6 +104,18 @@ export function AsideMenuMain() {
               <div key={index} ></div>
           ))
         }
+        <AsideMenuItemWithSub icon='/media/icons/duotune/coding/cod002.svg' to='/crafted/pages/profile' title='Cộng đồng & kiểm duyệt'>
+          <AsideMenuItem
+            to='pages/trends'
+            icon='/media/icons/duotune/files/fil004.svg'
+            title='Cộng đồng'
+          />
+          <AsideMenuItem
+            to='pages/trends'
+            icon='/media/icons/duotune/files/fil004.svg'
+            title='Kiểm duyệt bài viết'
+          />
+        </AsideMenuItemWithSub>
 
         <AsideMenuItemWithSub to='/crafted/pages/profile' title='Profile' hasBullet={true}>
           <AsideMenuItem to='/crafted/pages/profile/overview' title='Overview' hasBullet={true} />
