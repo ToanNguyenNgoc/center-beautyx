@@ -9,6 +9,8 @@ export const PRODUCTABLE_TYPE = {
 }
 export const FILE_IMG_TYPE = ['JPG', 'PNG', 'GIF', 'JPEG']
 export const FILE_VIDEO_TYPE = ['MP4', '3GP']
+export const accept_image = "image/jpeg, image/png, image/gif"
+export const accept_video = "video/mp4, video/mov, video/avi, video/wmv"
 export const BANNER_TYPE = {
   WEB: 'WEB',
   HTML: 'HTML',

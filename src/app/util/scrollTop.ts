@@ -1,4 +1,3 @@
-export function scrollTop() {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
+export function scrollTop(behavior?: 'auto' | 'smooth') {
+    window.scrollTo({ top: 0, behavior: behavior ?? 'auto' })
 }

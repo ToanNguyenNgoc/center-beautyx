@@ -7,6 +7,7 @@ import { useQuery } from 'react-query';
 import { QR_KEY } from 'common';
 import { discountsApi } from 'app/api';
 import TitlePage from 'components/TitlePage';
+import { PageCircularProgress } from 'components';
 
 function DiscountForm() {
     const { METHOD } = useVerifyRoute()
@@ -15,8 +16,8 @@ function DiscountForm() {
     if (params && params.id) {
         isForm = "EDIT"
     }
-    const { data, refetch } = useQuery({
-        queryKey: [QR_KEY.DISCOUNT_PAGE, params.id],
+    const { data, refetch, isLoading } = useQuery({
+        queryKey: [[QR_KEY.DISCOUNT, params.id]],
         queryFn: () => discountsApi.getDiscountDetail({
             id: params.id
         }),
@@ -31,6 +32,7 @@ function DiscountForm() {
             />
             <div className='post d-flex flex-column-fluid' id="kt_post">
                 <div className="container">
+                    {isLoading && <PageCircularProgress/>}
                     {(isForm === "ADD" || discount) &&
                         <Form
                             isForm={isForm}

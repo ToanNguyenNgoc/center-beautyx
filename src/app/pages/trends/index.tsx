@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import { toAbsoluteUrl } from '_metronic/helpers'
 import { ITrend } from './trend.interface'
 import request3rdApi from 'app/api/api-3rd-client/request'
+import { Button } from '@mui/material'
 
 function Trend() {
   const navigate = useNavigate()
@@ -25,7 +26,12 @@ function Trend() {
       <TitlePage
         title='Trends'
         element={
-          <XButton title='Tạo mới' color='success' onClick={() => navigate('/pages/trend-form')} />
+          <Button
+            size='large' color='success' variant='contained'
+            onClick={() => navigate('/pages/trend-form')}
+          >
+            Tạo mới
+          </Button>
         }
       />
       <div className={`card mb-5 mb-xl-8`}>
@@ -41,6 +47,7 @@ function Trend() {
               <thead>
                 <tr className='fw-bold text-muted'>
                   <th className='min-w-100px'>Bài đăng</th>
+                  <th className='min-w-70px'>Thumbnail</th>
                   <th className='min-w-140px'>Doanh nghiệp</th>
                   <th className='min-w-140px'>Dịch vụ được gán</th>
                   <th className='min-w-120px'>Ngày đăng</th>
@@ -96,6 +103,11 @@ const TrendRow = ({ item }: { item: ITrend }) => {
               <span className='text-dark fw-bold fs-6'>{item.title}</span>
             </div>
           </div>
+        </td>
+        <td>
+        <div className='symbol symbol-75px me-5'>
+              <img style={{objectFit:'contain'}} src={toAbsoluteUrl(item.image_thumb)} alt='' />
+            </div>
         </td>
         <td>
           <span className='text-dark fw-bold d-block fs-6'>

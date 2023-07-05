@@ -7,7 +7,8 @@ import { loginAsync } from '../../../redux/loginSlice';
 import { fetchAsyncUser } from '../../../redux/account/accountSlice';
 import clsx from "clsx"
 import { useAuth } from '../core/Auth'
-import { verifyUser } from "middleware";
+// import { verifyUser } from "middleware";
+import { request3rdApi } from "app/api/api-3rd-client";
 
 const loginSchema = Yup.object().shape({
     email: Yup.string()
@@ -49,6 +50,7 @@ export function Login() {
             setLoading(true)
             try {
                 const res = await dispatch(loginAsync({ email: values.email, password: values.password }))
+                onLogin3rd(values.email, values.password)
                 if (res.meta.requestStatus === "fulfilled" && res.payload) {
                     // const user_check = await verifyUser(res.payload)
                     // if (user_check) {
@@ -80,6 +82,12 @@ export function Login() {
             }
         },
     })
+    const onLogin3rd = async (email: string, password: string) => {
+        try {
+            const res = await request3rdApi.login({ email, password })
+            localStorage.setItem('3rd-auth', res.data.context.token)
+        } catch (error) { }
+    }
 
     return (
         <>

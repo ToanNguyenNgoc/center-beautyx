@@ -1,27 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Button, MenuItem, Select, TextField } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import { Box, MenuItem, Select, TextField } from '@mui/material';
+import React, { useState } from 'react';
 import { useFormik } from "formik";
-import { debounce } from "lodash";
 import * as Yup from "yup";
 import { format } from 'date-fns';
 import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
-import { AppSnack, FlatFormOrder, XSwitch } from 'components'
-import orgApi from 'app/api/orgApi';
+import { AppSnack, FlatFormOrder, SelectionOrgMultiple, XSwitch } from 'components'
 import moment from 'moment';
 import { useMutation } from 'react-query';
 import { ReqDiscountBody } from '@types';
 import { discountsApi } from 'app/api';
 import { LoadingButton } from '@mui/lab';
-import { IDiscountPar, IITEMS_DISCOUNT, IOrganization } from 'app/interface';
+import { IDiscountPar, IITEMS_DISCOUNT } from 'app/interface';
 import {
     DISCOUNTS_TYPE,
     DISCOUNT_TYPE,
     DISCOUNT_UNIT,
     DISCOUNT_UNIT_ARR,
     PLAT_FORM_ARR,
-    formatPrice,
-    onErrorImg
+    formatPrice
 } from 'app/util';
 import { useMessage } from 'app/hooks';
 import { useNavigate } from 'react-router-dom';
@@ -41,27 +38,10 @@ function Form(props: IProps) {
     const { resultLoad, onCloseNoti, noti } = useMessage()
     const navigate = useNavigate()
     const [isCampaign, setIsCampaign] = useState(discount?.is_campaign ?? false)
-    const [orgs, setOrgs] = useState<IOrganization[]>(discount?.organizations || [])
     const [services, setServices] = useState<any>(
         isForm === "EDIT" ?
             discount?.items.map((item: IITEMS_DISCOUNT) => item.productable) : []
     )
-    const callOrgsByKeyword = async (keyword: string) => {
-        const res = await orgApi.getAll({
-            keyword: keyword,
-            is_ecommerce: true
-        })
-        setOrgs(res.data.context.data)
-    }
-    const debounceDropDownOrgs = useCallback(
-        debounce((nextValue) => {
-            callOrgsByKeyword(nextValue);
-        }, 1000),
-        []
-    );
-    const onChangeSearchOrgs = (e: any) => {
-        debounceDropDownOrgs(e.target.value)
-    }
     //handle submit form
     //[HANDLE POST]
     const { mutate, isLoading } = useMutation({
@@ -96,7 +76,7 @@ function Form(props: IProps) {
             discount_type: isForm === "EDIT" ? discount?.discount_type : "",
             discount_unit: isForm === "EDIT" ? discount?.discount_unit : "",
             discount_value: isForm === "EDIT" ? discount?.discount_value : "",
-            organizations: isForm === "EDIT" ? discount?.organizations.map((org: IOrganization) => JSON.stringify(org)) : [],
+            organizations: isForm === "EDIT" ? discount?.organizations : [],
             total: (isForm === "EDIT" && discount?.total) ? discount?.total : "",
             valid_from: (isForm === "EDIT" && discount?.valid_from) ? discount?.valid_from : "",
             valid_util: (isForm === "EDIT" && discount?.valid_util) ? discount?.valid_util : "",
@@ -122,18 +102,16 @@ function Form(props: IProps) {
             const newValue = values as any
             const body = {
                 ...newValue,
-                organizations: newValue.organizations.map((i: string) => JSON.parse(i))[0]?.id,
+                organizations: values.organizations?.map(i => i.id)[0],
                 items: services.map((i: any) => i.id),
                 platform: newValue.platform[0] ?? 'MOMO',
                 is_campaign: isCampaign ? 1 : 0
             }
-            // console.log(body)
             if (services.length > 0) {
                 mutate(body)
             }
         },
     })
-    const orgsChoose = formik.values?.organizations?.map((item: string) => item ? JSON.parse(item) : item);
     const minPriceItem = Math.min.apply(null, services.map((i: any) => i?.price));
     let totalServicesPrice = 0;
     if (services.length > 0) {
@@ -316,46 +294,16 @@ function Form(props: IProps) {
                         </span>
                     )}
                 </div>
-
                 {/* orgs select */}
                 <div className="flex-col input-wrap">
-                    <label className="required form-label">Doanh nghiệp được áp dụng</label>
-                    <Select
-                        labelId="demo-multiple-chip-label"
-                        id="demo-multiple-chip"
-                        multiple
-                        value={formik.values.organizations}
-                        onChange={formik.handleChange}
-                        name="organizations"
-                        renderValue={(selected: any) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected?.filter(Boolean).map((value: any, index: number) => {
-                                    const orgItem: IOrganization = JSON.parse(value);
-                                    return (
-                                        <div tabIndex={1} key={index} className="org-item-select">
-                                            <img src={orgItem?.image_url} onError={(e) => onErrorImg(e)} alt="" className="avatar" />
-                                            <span className="name">{orgItem?.name}</span>
-                                        </div>
-                                    )
-                                })}
-                            </Box>
-                        )}
-                    >
-                        <input
-                            onChange={onChangeSearchOrgs}
-                            type="text"
-                            className="form-control form-control-solid"
-                            placeholder="Tìm kiếm doanh nghiệp..."
-                        />
-                        {orgs.slice(0, 6).map((item: IOrganization) => (
-                            <MenuItem
-                                key={item.id}
-                                value={JSON.stringify(item)}
-                            >
-                                {item.name}
-                            </MenuItem>
-                        ))}
-                    </Select>
+                    <SelectionOrgMultiple
+                        label='Doanh nghiệp được áp dụng'
+                        origins={formik.values.organizations}
+                        onChangeOrigin={(orgs) => {
+                            setServices([])
+                            formik.setFieldValue('organizations', orgs)
+                        }}
+                    />
                     {formik.errors.organizations && formik.touched.organizations && (
                         <span className='text-danger'>
                             {formik.errors.organizations}
@@ -368,7 +316,7 @@ function Form(props: IProps) {
                     <SelectService
                         values={services}
                         setValues={setServices}
-                        orgsChoose={orgsChoose}
+                        orgsChoose={formik.values.organizations}
                     />
                 </div>
                 {/* end orgs select */}

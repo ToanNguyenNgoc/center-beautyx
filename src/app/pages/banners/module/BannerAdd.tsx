@@ -5,25 +5,23 @@ import '../style.scss';
 import 'react-quill/dist/quill.snow.css';
 import { useMutation, useQuery } from 'react-query';
 import { QR_KEY } from 'common';
-import { bannerApi, orgApi } from 'app/api';
+import { bannerApi } from 'app/api';
 import { useFormik } from 'formik';
 import { FileUploader } from 'react-drag-drop-files';
 import { BANNERS_TYPE, BANNER_TYPE, FILE_IMG_TYPE, testLinkYoutube } from 'app/util';
 import { IMGS } from '_metronic/assets/imgs/imgs';
-import { Box, Chip, CircularProgress, FormControl, LinearProgress, MenuItem, Select, TextField } from '@mui/material';
+import { CircularProgress, FormControl, LinearProgress, MenuItem, Select, TextField } from '@mui/material';
 import { useMessage, usePostMedia } from 'app/hooks';
 import { PLAT_FORM_ARR } from 'app/util';
 import { DesktopDatePicker } from '@mui/x-date-pickers';
 import moment from 'moment';
-import { ChangeEvent, Dispatch, FC, SetStateAction, useCallback, useRef, useState } from 'react';
+import { ChangeEvent, Dispatch, FC, SetStateAction, useState } from 'react';
 import ReactQuill from 'react-quill';
-import { debounce } from 'lodash';
-import { ResponseDetail, ResponseList } from '@types';
 import { IBanner, IOrganization } from 'app/interface';
 import { LoadingButton } from '@mui/lab';
 import * as Yup from "yup"
 import { AxiosError } from 'axios';
-import { AppSnack } from 'components';
+import { AppSnack, SelectionOrg } from 'components';
 
 function BannerAdd() {
     // useVerifyRoute()
@@ -267,30 +265,6 @@ interface RenderElementProps {
 }
 const RenderElement: FC<RenderElementProps> = ({ formik, origin, setOrigin, banner }) => {
     const type = formik.values.type
-    //[handle TYPE === "ORGANIZATION"]
-    useQuery({
-        queryKey: ['BANNER', banner?.id, banner?.origin_id],
-        queryFn: () => orgApi.getOrgById(banner?.origin_id).then<ResponseDetail<IOrganization>>(res => res.data),
-        enabled: (banner?.type === BANNER_TYPE.ORGANIZATION && banner?.origin_id) ? true : false,
-        onSuccess: (data) => setOrigin(data.context),
-    })
-    const refOrgSearch = useRef<HTMLDivElement>(null)
-    const onTriggerOrgSearch = (arg: 'hide' | 'show') => {
-        if (refOrgSearch.current) {
-            if (arg === 'hide') { refOrgSearch.current.classList.remove('org-search-show') }
-            if (arg === 'show') { refOrgSearch.current.classList.add('org-search-show') }
-        }
-    }
-    window.addEventListener('click', () => onTriggerOrgSearch('hide'))
-    const { data, mutate, isLoading } = useMutation({
-        mutationFn: (keyword: string) => orgApi.getAll({ keyword, is_ecommerce: true })
-            .then<ResponseList<IOrganization[]>>(res => res.data.context)
-    })
-    const debounceOrgs = useCallback(
-        debounce((keyword) => mutate(keyword), 600),
-        []
-    );
-    const onChangeOrgSearch = (e: ChangeEvent<HTMLInputElement>) => (type === BANNER_TYPE.ORGANIZATION) && debounceOrgs(e.target.value)
     //[handle type === "VIDEO"]
     const { isLoading: isLoadingVideo, handlePostMedia } = usePostMedia()
     const handleChangeVideo = (e: ChangeEvent<HTMLInputElement>) => {
@@ -328,35 +302,11 @@ const RenderElement: FC<RenderElementProps> = ({ formik, origin, setOrigin, bann
             }
             {
                 type === BANNER_TYPE.ORGANIZATION &&
-                <div className="col col-org">
-                    <label className="filter-row_label">Gắn doanh nghiệp</label>
-                    <div
-                        onClick={(e) => { e.stopPropagation(); onTriggerOrgSearch('show') }}
-                        className="form-control form-control-solid"
-                    >
-                        {
-                            origin ?
-                                <Chip color='success' label={origin.name} onDelete={() => setOrigin(undefined)} />
-                                :
-                                'Gắn doanh nghiệp'
-                        }
-                    </div>
-                    <Box ref={refOrgSearch} sx={{ boxShadow: 3 }} className="org-search">
-                        <div onClick={(e) => e.stopPropagation()}>
-                            <input onChange={onChangeOrgSearch} type="text" className="form-control form-control-solid" placeholder='Tìm kiếm...' />
-                            {isLoading && <CircularProgress size={16} />}
-                            <div className="org-list">
-                                <ul className="list">
-                                    {
-                                        data?.data?.map(item => (
-                                            <MenuItem onClick={() => setOrigin(item)} key={item.id} >{item.name}</MenuItem>
-                                        ))
-                                    }
-                                </ul>
-                            </div>
-                        </div>
-                    </Box>
-                </div>
+                <SelectionOrg
+                    organization_id={banner?.origin_id}
+                    origin={origin}
+                    setOrigin={setOrigin}
+                />
             }
             {
                 type === BANNER_TYPE.VIDEO &&

@@ -1,12 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useVerifyRoute } from 'app/hooks';
 import TitlePage from 'components/TitlePage';
 import { formatDate } from 'app/util/format';
 import { DISCOUNTS_TYPE, DiscountsTypeElement } from 'app/util/fileType';
 import FlatFormOrder from 'components/PlatForm';
 import { KTSVG } from '_metronic/helpers';
 import { IDiscountPar } from 'app/interface';
-import { XPagination } from 'components';
+import { PageCircularProgress, XPagination } from 'components';
 import { useQuery } from 'react-query';
 import { QR_KEY } from 'common';
 import { discountsApi } from 'app/api';
@@ -23,13 +22,13 @@ function Discounts() {
     const navigate = useNavigate()
     const query = queryString.parse(location.search) as ReqDiscount
 
-    const { METHOD } = useVerifyRoute()
-    const { data } = useQuery({
+    // const { METHOD } = useVerifyRoute()
+    const { data, isLoading } = useQuery({
         queryKey: [QR_KEY.DISCOUNT_PAGE, query],
         queryFn: () => discountsApi.getAll({
             page: query?.page ?? 1,
             limit: 15,
-            'filter[filter_all]':true,
+            'filter[filter_all]': true,
             'filter[platform]': query['filter[platform]'],
             'filter[discount_type]': query['filter[discount_type]'],
             'sort': query.sort ?? '-created_at'
@@ -89,6 +88,7 @@ function Discounts() {
                                     <th className='min-w-100px text-end'>Actions</th>
                                 </tr>
                             </thead>
+                            <PageCircularProgress loading={isLoading} />
                             <tbody>
                                 {
                                     discounts.map((item: IDiscountPar, index: number) => (
@@ -163,20 +163,6 @@ function Discounts() {
                                             <td>
                                                 <div className='d-flex justify-content-end flex-shrink-0 tb-control'>
                                                     {
-                                                        METHOD?.includes("GET_BY_ID") &&
-                                                        <Link
-                                                            to={{
-                                                                pathname: `/pages/discounts/${item.id}`
-                                                            }}
-                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
-                                                        >
-                                                            <KTSVG
-                                                                path='/media/icons/duotune/general/gen019.svg'
-                                                                className='svg-icon-3'
-                                                            />
-                                                        </Link>
-                                                    }
-                                                    {
                                                         // METHOD?.includes("UPDATE") &&
                                                         <Link
                                                             to={{
@@ -189,6 +175,19 @@ function Discounts() {
                                                         </Link>
                                                     }
                                                     {
+                                                        // METHOD?.includes("GET_BY_ID") &&
+                                                        (item.platform === 'SHOPEE' || item.platform === 'VINID') &&
+                                                        <button
+                                                            className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                                                            onClick={() => navigate(`/pages/discounts/${item.uuid}`)}
+                                                        >
+                                                            <KTSVG
+                                                                path='/media/icons/duotune/general/gen019.svg'
+                                                                className='svg-icon-3'
+                                                            />
+                                                        </button>
+                                                    }
+                                                    {
                                                         (item.platform === 'SHOPEE' || item.platform === 'VINID') &&
                                                         <ExportCode
                                                             title=''
@@ -196,15 +195,6 @@ function Discounts() {
                                                             discount={item}
                                                         />
                                                     }
-                                                    {/* <Link
-                                                        to='#'
-                                                        className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
-                                                    >
-                                                        <KTSVG
-                                                            path='/media/icons/duotune/general/gen027.svg'
-                                                            className='svg-icon-3'
-                                                        />
-                                                    </Link> */}
                                                 </div>
                                             </td>
                                         </tr>

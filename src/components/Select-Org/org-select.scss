@@ -1,0 +1,39 @@
+.col-org {
+  position: relative;
+
+
+  .org-search {
+    position: absolute;
+    width: 100%;
+    height: fit-content;
+    max-height: 300px;
+    border-radius: 2px;
+    background-color: var(--kt-white);
+    margin-top: 25px;
+    padding: 12px;
+    visibility: hidden;
+    z-index: 1;
+    opacity: 0;
+    transition: all .4s;
+
+    .MuiCircularProgress-root {
+      position: absolute;
+      z-index: 2;
+      top: 28px;
+      right: 20px;
+    }
+
+    .org-list {
+      height: fit-content;
+      max-height: 250px;
+      overflow-y: scroll;
+    }
+  }
+
+  .org-search-show {
+    margin-top: 10px;
+    visibility: visible;
+    opacity: 1;
+    transition: all .4s;
+  }
+}

@@ -1,158 +1,126 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
-import "./style.scss";
-import { useSwr, useVerifyRoute } from 'app/hooks';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { IDiscountPar } from 'app/interface/discounts';
-import { extraServicesDiscount } from 'app/util/extraProductable';
 import TitlePage from 'components/TitlePage';
-import { formatDate, formatPrice } from 'app/util/format';
 import FlatFormOrder from 'components/PlatForm';
-import { DiscountsTypeElement, DISCOUNT_UNIT } from 'app/util/fileType';
-import { IOrganization } from 'app/interface/organization';
-import { DIRECT_ORG } from 'app/util/directToBeauty';
-import onErrorImg from 'app/util/onErrorImg';
-import { IService } from 'app/interface/service';
-import ServiceCard from 'components/ServiceCard';
-import { API_ROUTE } from 'app/api/api-route';
+import { useQuery } from 'react-query';
+import { QR_KEY } from 'common';
+import { discountsApi } from 'app/api';
+import moment from 'moment';
+import { PageCircularProgress, XPagination } from 'components';
+import { ExportCode } from 'app/pages/discounts/module/discount-form';
+import queryString from 'query-string'
+import "./style.scss";
 
 function DiscountDetail() {
-    const { METHOD } = useVerifyRoute()
+    // const { METHOD } = useVerifyRoute()
+    const navigate = useNavigate()
     const params: any = useParams()
-    const navigate = useNavigate();
-    let condition = false
-    if (params.id && METHOD?.includes('GET_BY_ID')) condition = true
-    const { response, error } = useSwr(condition, API_ROUTE.DISCOUNTS_ID(params.id))
-    useEffect(() => { if (error) return navigate("/error/404") }, [error])
-    const discount: IDiscountPar = response
-    const servicesDiscount = extraServicesDiscount(discount);
+    const location = useLocation()
+    const query: any = queryString.parse(location.search)
+    const state = location.state as IDiscountPar | null
+    const { data } = useQuery({
+        queryKey: [QR_KEY.DISCOUNT, params.id],
+        queryFn: () => discountsApi.getDiscountDetail({ id: params.id }),
+        enabled: !state ? true : false,
+        onError: () => navigate("/error/404")
+    })
+    const discount = state ?? data?.context
+    const { data: dataCode } = useQuery({
+        queryKey: [QR_KEY.DISCOUNT_CODE, params.id, query],
+        queryFn: () => discountsApi.getCodeIsCampaign({
+            uuid: params.id,
+            limit: 50,
+            page: query?.page ?? 1
+        }),
+        enabled: params?.id ? true : false
+    })
+    const onChangePage = (page: number) => {
+        const newQuery = { page: page }
+        navigate({
+            pathname: location.pathname,
+            search: queryString.stringify(newQuery),
+        })
+    }
 
     return (
         discount ?
             <>
                 <TitlePage
-                    title={discount?.title}
+                    title={discount?.title ?? ''}
                     element={
-                        METHOD?.includes("UPDATE") ?
-                            <Link
-                                to={{
-                                    pathname: "/pages/discount-form",
-                                    search: `id=${discount.id}`
-                                }}
-                                className="btn btn-sm btn-success">Thay đổi thông tin
-                            </Link>
-                            :
-                            <></>
+                        // METHOD?.includes("UPDATE") ?
+                        <Link
+                            to={{
+                                pathname: `/pages/discounts-form/${discount?.uuid}`
+                            }}
+                            className="btn btn-sm btn-success">Thay đổi thông tin
+                        </Link>
+                        // :
+                        // <></>
                     }
                 />
-                <div className="card card-custom">
-                    <div className="flex-row-sp card-detail-head">
-                        <div className="left">
-                            <div className="left-item">
-                                <span className='left-item__title'>Mã giảm giá:</span>
-                                <span className="badge badge-light-danger">{discount.coupon_code}</span>
-                            </div>
-                            <div className="left-item">
-                                <span className="left-item__title">
-                                    Thời gian áp dụng:
-                                </span>
-                                <span className="date-ex">
-                                    {formatDate(discount.valid_from)}-{formatDate(discount.valid_util)}
-                                </span>
-                            </div>
-                        </div>
-                        <div className="right">
-                            <FlatFormOrder platForm={discount.platform ? discount.platform : ""} />
-                        </div>
-                    </div>
-                    <div className="card-detail-apply">
-                        <div className="card-detail-apply__item">
-                            <span className="title"> Giảm
-                                {discount?.discount_unit === DISCOUNT_UNIT.PERCENT ? '(%)' : '(VNĐ)'}
-                                : </span>
-                            <span className="value">{formatPrice(discount?.discount_value)}</span>
-                        </div>
-                        <div className="card-detail-apply__item">
-                            <span className="title">
-                                Hình thức giảm giá:
-                            </span>
-                            <DiscountsTypeElement
-                                TYPE={discount.discount_type}
-                            />
-                        </div>
-                        <div className="card-detail-apply__item">
-                            <span className="title"> Giá trị đơn hàng tối thiểu: </span>
-                            <span className="value">{
-                                discount?.minimum_order_value || "Không ràng buộc"
-                            }</span>
-                        </div>
-                        <div className="card-detail-apply__item">
-                            <span className="title"> Số lượng: </span>
-                            <span className="value">{
-                                discount?.total || "Không giới hạn"
-                            }</span>
-                        </div>
-                        <div className="card-detail-apply__item">
-                            <span className="title">
-                                {discount?.limit ?
-                                    `Giới hạn ${discount?.limit} lần sử dụng mỗi khách hàng`
-                                    :
-                                    `Không giới hạn số lần sử dụng mỗi khách hàng`}
-                            </span>
-                        </div>
-                        <div className="card-detail-apply__item">
-                            <span className="title">
-                                Mô tả:
-                            </span>
-                            <span className="value">{discount?.description}</span>
-                        </div>
-                    </div>
-                    <div className="card-org-list">
-                        <span className="title">
-                            Doanh nghiệp được áp dụng
-                        </span>
-                        <ul className="list">
-                            {
-                                discount?.organizations?.map((org: IOrganization, index: number) => (
-                                    <li key={index} className="list-item">
-                                        <div
-                                            onClick={() => DIRECT_ORG(org)}
-                                            className="flex-col-al org-item-card"
-                                        >
-                                            <img src={org?.image_url}
-                                                alt=""
-                                                className="org-avatar"
-                                                onError={(e) => onErrorImg(e)}
-                                            />
-                                            <span className="org-name">
-                                                {org?.name}
-                                            </span>
+                <div className="container">
+                    <div className="detail">
+                        <div className="d-flex justify-content-between align-items-start">
+                            <p className="fw-semobold d-block fs-4">Danh sách mã giảm giá ({discount.total} mã)</p>
+                            <div>
+                                <div className="d-flex align-items-center">
+                                    <label style={{ marginRight: '8px' }}>Nền tảng</label>
+                                    <FlatFormOrder
+                                        platForm={discount?.platform ?? ''}
+                                    />
+                                </div>
+                                <div className="d-flex align-items-center">
+                                    <label style={{ marginRight: '8px' }}>Áp dụng từ</label>
+                                    {
+                                        (discount?.valid_from && discount?.valid_util) &&
+                                        <div className='d-flex align-items-center'>
+                                            <span className="fw-semobold d-block fs-6">{moment(discount.valid_from).format('DD/MM/YYYY')}</span>
+                                            -
+                                            <span className="fw-semobold d-block fs-6">{moment(discount.valid_util).format('DD/MM/YYYY')}</span>
                                         </div>
-                                    </li>
-                                ))
-                            }
-                        </ul>
-                    </div>
-                    <div className="card-org-list">
-                        <span className="title">
-                            Sản phẩm/ Dịch vụ đc áp dụng
-                        </span>
-                        <ul className="list">
-                            {
-                                servicesDiscount?.map((service: IService, index: number) => (
-                                    <li key={index} className="list-item">
-                                        <ServiceCard
-                                            service={service}
-                                        />
-                                    </li>
-                                ))
-                            }
-                        </ul>
+                                    }
+                                </div>
+                                <div className='d-flex justify-content-end mt-2 mb-2'>
+                                    <ExportCode
+                                        discount={discount}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <table className="table table-rounded table-row-bordered border gy-7 gs-7">
+                            <thead>
+                                <tr className="fw-bold fs-6 text-gray-800 border-bottom-2 border-gray-200">
+                                    <th>STT</th>
+                                    <th>Mã giảm giá</th>
+                                    <th>Trạng thái sử dụng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    dataCode?.data?.map((item, index) => (
+                                        <tr key={index} className={item.status === "1" ? "" : "table-active"}>
+                                            <td>{index + 1}</td>
+                                            <td>{item.coupon_code}</td>
+                                            <td>
+                                                {item.status === '1' ? 'Chưa sử dụng' : 'Đã sử dụng'}
+                                            </td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                        <XPagination
+                            totalPage={dataCode?.total ? Math.ceil(dataCode.total / 50) : 1}
+                            defaultPage={query?.page ?? 1}
+                            onChangePage={onChangePage}
+                        />
                     </div>
                 </div>
             </>
             :
-            <></>
+            <PageCircularProgress loading={true} />
     );
 }
 

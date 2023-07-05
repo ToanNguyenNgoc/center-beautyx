@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useRef, useState } from "react"
 import "./style.scss"
-import { Chip, CircularProgress } from "@mui/material"
+import { Avatar, Chip, CircularProgress } from "@mui/material"
 import { IOrganization, IService } from "app/interface"
 import orgApi from "app/api/orgApi"
 import { debounce } from "lodash"
@@ -76,6 +76,7 @@ export const SelectService = ({ orgsChoose = [], values = [], setValues }: Selec
               onDelete={() => setValues((prev: any) => prev.filter((i: any) => i.id !== item.id))}
               size="medium"
               color="primary"
+              avatar={<Avatar src={item.image_url} />}
             />
           ))
         }
