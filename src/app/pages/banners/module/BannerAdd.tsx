@@ -282,7 +282,7 @@ const RenderElement: FC<RenderElementProps> = ({ formik, origin, setOrigin, bann
     return (
         <div className='mt-8'>
             {
-                (type === BANNER_TYPE.SEARCH_RESULT || type === BANNER_TYPE.WEB) &&
+                (type === BANNER_TYPE.SEARCH_RESULT || type === BANNER_TYPE.WEB || type === BANNER_TYPE.POPUP) &&
                 <div className="col">
                     <label className="filter-row_label">Đường dẫn</label>
                     <input

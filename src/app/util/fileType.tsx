@@ -19,6 +19,7 @@ export const BANNER_TYPE = {
   SEARCH_RESULT: 'SEARCH_RESULT',
   DISCOUNT: 'DISCOUNT',
   SERVICE: 'SERVICE',
+  POPUP: 'POPUP'
 }
 export const DISCOUNT_TYPE = {
   SUB_TOTAL: 'SUB_TOTAL',
@@ -26,33 +27,34 @@ export const DISCOUNT_TYPE = {
   FINAL_PRICE: 'FINAL_PRICE',
 }
 export const DISCOUNTS_TYPE = [
-  {id: 1, TYPE: DISCOUNT_TYPE.PRODUCTS, title: 'Giảm giá trên sản phẩm'},
-  {id: 2, TYPE: DISCOUNT_TYPE.SUB_TOTAL, title: 'Giảm giá trên tổng đơn'},
-  {id: 3, TYPE: DISCOUNT_TYPE.FINAL_PRICE, title: ' Giảm giá còn '},
+  { id: 1, TYPE: DISCOUNT_TYPE.PRODUCTS, title: 'Giảm giá trên sản phẩm' },
+  { id: 2, TYPE: DISCOUNT_TYPE.SUB_TOTAL, title: 'Giảm giá trên tổng đơn' },
+  { id: 3, TYPE: DISCOUNT_TYPE.FINAL_PRICE, title: ' Giảm giá còn ' },
 ]
 export const DISCOUNT_UNIT = {
   PRICE: 'PRICE',
   PERCENT: 'PERCENT',
 }
 export const DISCOUNT_UNIT_ARR = [
-  {id: 1, TYPE: DISCOUNT_UNIT.PERCENT, title: 'Giảm theo phần trăm'},
-  {id: 2, TYPE: DISCOUNT_UNIT.PRICE, title: 'Giảm theo giá tiền'},
+  { id: 1, TYPE: DISCOUNT_UNIT.PERCENT, title: 'Giảm theo phần trăm' },
+  { id: 2, TYPE: DISCOUNT_UNIT.PRICE, title: 'Giảm theo giá tiền' },
 ]
 
 export const BANNERS_TYPE: IBannerType[] = [
-  {id: 1, type: BANNER_TYPE.WEB, title: 'Web'},
-  {id: 2, type: BANNER_TYPE.HTML, title: 'HTML'},
-  {id: 3, type: BANNER_TYPE.VIDEO, title: 'Video'},
-  {id: 4, type: BANNER_TYPE.ORGANIZATION, title: 'Doanh nghiệp'},
-  {id: 5, type: BANNER_TYPE.SEARCH_RESULT, title: 'Kết quả tìm kiếm'},
-  {id: 6, type: BANNER_TYPE.DISCOUNT, title: 'Giảm giá'},
-  {id: 7, type: BANNER_TYPE.SERVICE, title: 'Dịch vụ'},
+  { id: 1, type: BANNER_TYPE.WEB, title: 'Web' },
+  { id: 2, type: BANNER_TYPE.HTML, title: 'HTML' },
+  { id: 3, type: BANNER_TYPE.VIDEO, title: 'Video' },
+  { id: 4, type: BANNER_TYPE.ORGANIZATION, title: 'Doanh nghiệp' },
+  { id: 5, type: BANNER_TYPE.SEARCH_RESULT, title: 'Kết quả tìm kiếm' },
+  { id: 6, type: BANNER_TYPE.DISCOUNT, title: 'Giảm giá' },
+  { id: 7, type: BANNER_TYPE.SERVICE, title: 'Dịch vụ' },
+  { id: 8, type: BANNER_TYPE.POPUP, title: 'Popup' }
 ]
-export const BannerTypeElement = ({TYPE}: {TYPE: any}) => {
+export const BannerTypeElement = ({ TYPE }: { TYPE: any }) => {
   const title = BANNERS_TYPE.find((i) => i.type === TYPE)?.title
   return <span className='badge badge-light-success'>{title || 'Tất cả'}</span>
 }
-export const DiscountsTypeElement = ({TYPE}: {TYPE: any}) => {
+export const DiscountsTypeElement = ({ TYPE }: { TYPE: any }) => {
   const title = DISCOUNTS_TYPE.find((i) => i.TYPE === TYPE)?.title
   return <span className='badge badge-light-success'>{title}</span>
 }
@@ -65,13 +67,13 @@ export const ORDER_STATUS = {
   PAID: 'PAID',
 }
 export const ORDER_STATUS_ARR = [
-  {id: 1, TYPE: ORDER_STATUS.CANCELED_BY_USER, title: 'Hủy bởi người dùng'},
-  {id: 2, TYPE: ORDER_STATUS.CANCELED, title: 'Đã hủy'},
-  {id: 3, TYPE: ORDER_STATUS.TIMEOUT, title: 'Quá hạn thanh toán'},
-  {id: 4, TYPE: ORDER_STATUS.PENDING, title: 'Chờ thanh toán'},
-  {id: 5, TYPE: ORDER_STATUS.PAID, title: 'Thanh toán thành công'},
+  { id: 1, TYPE: ORDER_STATUS.CANCELED_BY_USER, title: 'Hủy bởi người dùng' },
+  { id: 2, TYPE: ORDER_STATUS.CANCELED, title: 'Đã hủy' },
+  { id: 3, TYPE: ORDER_STATUS.TIMEOUT, title: 'Quá hạn thanh toán' },
+  { id: 4, TYPE: ORDER_STATUS.PENDING, title: 'Chờ thanh toán' },
+  { id: 5, TYPE: ORDER_STATUS.PAID, title: 'Thanh toán thành công' },
 ]
-export const OrderStatusElement = ({status}: {status: string}) => {
+export const OrderStatusElement = ({ status }: { status: string }) => {
   const onCheckOrderStatus = () => {
     switch (status) {
       case ORDER_STATUS.CANCELED_BY_USER:
@@ -90,7 +92,7 @@ export const OrderStatusElement = ({status}: {status: string}) => {
 }
 
 // status SerPro
-export const StatusElement = ({status}: {status: boolean}) => {
+export const StatusElement = ({ status }: { status: boolean }) => {
   const onCheckStatus = () => {
     switch (status) {
       case false:
@@ -103,12 +105,12 @@ export const StatusElement = ({status}: {status: boolean}) => {
 }
 // close status SerPro
 export const APPROVE_STATUS = [
-  {STATUS: 'REJECT'},
-  {STATUS: 'PENDING'},
-  {STATUS: 'REVIEW'},
-  {STATUS: 'APPROVED'},
+  { STATUS: 'REJECT' },
+  { STATUS: 'PENDING' },
+  { STATUS: 'REVIEW' },
+  { STATUS: 'APPROVED' },
 ]
-export const ApproveStatusElement = ({status}: {status: string}) => {
+export const ApproveStatusElement = ({ status }: { status: string }) => {
   const onCheckApproveStatus = () => {
     switch (status) {
       case 'REJECT':
@@ -123,7 +125,7 @@ export const ApproveStatusElement = ({status}: {status: string}) => {
   }
   return <>{onCheckApproveStatus()}</>
 }
-export const ApproveTypeElement = ({type}: {type: string}) => {
+export const ApproveTypeElement = ({ type }: { type: string }) => {
   const onCheckApproveType = () => {
     switch (type) {
       case 'ECOMMERCE_OFF':
@@ -138,7 +140,7 @@ export const ApproveTypeElement = ({type}: {type: string}) => {
   }
   return <>{onCheckApproveType()}</>
 }
-export const StatusOrgE = ({status}: {status: boolean}) => {
+export const StatusOrgE = ({ status }: { status: boolean }) => {
   const onCheckStatus = () => {
     switch (status) {
       case true:
