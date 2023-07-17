@@ -70,14 +70,14 @@ function TrendForm() {
     handlePostMedia({
       e,
       callBack: (data) => formik.setFieldValue('media_url', data[0]?.original_url),
-      version: 'media.beautyx'
+      version: 'api.beautyx'
     })
   }
   const onChangeThumb = (e: ChangeEvent<HTMLInputElement>) => {
     handlePostThumb({
       e,
       callBack: (data) => formik.setFieldValue('image_thumb', data[0]?.original_url),
-      version: 'media.beautyx'
+      version: 'api.beautyx'
     })
   }
   return (

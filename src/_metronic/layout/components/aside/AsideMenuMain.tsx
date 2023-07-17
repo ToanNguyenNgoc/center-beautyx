@@ -64,6 +64,11 @@ export function AsideMenuMain() {
           title='Banners'
         />
         <AsideMenuItem
+          to='pages/promotions'
+          icon='/media/icons/duotune/finance/fin008.svg'
+          title='Promotions'
+        />
+        <AsideMenuItem
           to='pages/discounts'
           icon='/media/icons/duotune/finance/fin008.svg'
           title='Giảm giá'

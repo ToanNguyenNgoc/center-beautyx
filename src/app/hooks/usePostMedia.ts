@@ -3,14 +3,15 @@ import { request3rdApi } from "app/api/api-3rd-client";
 import { mediaApi } from "app/api";
 
 type Media = {
-  mediaId: number;
+  model_id: number;
   original_url: string;
+  model_type: string
 }
 
 type PostType = {
   e: ChangeEvent<HTMLInputElement>,
   callBack?: (data: Media[]) => void,
-  version?: 'myspa' | 'media.beautyx' | 'media.beautyx/cloud'
+  version?: 'myspa' | 'api.beautyx' | 'api.beautyx/cloud'
 }
 
 export function usePostMedia() {
@@ -19,31 +20,39 @@ export function usePostMedia() {
   const handlePostMedia = async ({ e, callBack, version = 'myspa' }: PostType) => {
     if (e.target.files) {
       setIsLoading(true)
+      let tempImages: Media[] = []
+      for (var j = 0; j < e.target.files?.length; j++) {
+        const item = {
+          model_id: -j,
+          original_url: URL.createObjectURL(e.target.files[j]),
+          model_type: e.target.files[j].type
+        }
+        tempImages.push(item)
+      }
+      if (callBack) { callBack(tempImages) }
       try {
         const mediaList: Media[] = []
         for (var i = 0; i < e.target.files?.length; i++) {
           const fileItem = e.target.files[i]
           let formData = new FormData()
           let resMedia = {
-            original_url: '',
-            mediaId: i
+            original_url: URL.createObjectURL(fileItem),
+            model_id: i,
+            model_type: e.target.files[i].type
           }
           formData.append('file', fileItem)
           let res: any
-          if (version === 'media.beautyx') {
+          if (version === 'api.beautyx') {
             res = await request3rdApi.media(formData)
           }
-          if (version === 'media.beautyx/cloud') {
+          if (version === 'api.beautyx/cloud') {
             res = await request3rdApi.mediaCloud(formData)
           }
           if (version === 'myspa') {
             res = await mediaApi.postMedia(formData).then(res => res.data.context)
           }
           if (res) {
-            resMedia = {
-              original_url: res.original_url,
-              mediaId: res.id
-            }
+            resMedia = { ...resMedia, model_id: res.model_id }
           }
           mediaList.push(resMedia)
         }

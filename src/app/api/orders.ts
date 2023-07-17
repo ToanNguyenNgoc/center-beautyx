@@ -1,7 +1,7 @@
-import axiosClient from "./axios";
 import { pickBy, identity } from 'lodash';
 import { AUTH_HEADER_PARAM_GET } from './config_header'
 import {paramOrder} from 'app/query-params'
+import { axiosClient } from 'configs';
 
 class Orders {
     getAllOrder = (values: any) => {

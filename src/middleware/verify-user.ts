@@ -1,8 +1,8 @@
 import { AuthModel } from "app/interface/account_models";
 import { API_ROUTE } from "app/api/api-route";
-import axiosClient from "app/api/axios";
 import { IAUTHOR } from "app/interface";
 import { ROLE_KEY, AUTH_LOCAL_TOKEN } from "app/modules/auth/core/AuthHelpers"
+import { axiosClient } from "configs";
 
 const getRoles = async (token: string) => {
     return axiosClient.get(API_ROUTE.ROLES, {

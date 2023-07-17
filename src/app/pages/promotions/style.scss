@@ -1,0 +1,54 @@
+.promotion-form {
+  width: 100%;
+  padding: 2rem;
+  box-shadow: var(--kt-card-box-shadow);
+  background-color: var(--kt-card-bg);
+  border-radius: 8px;
+
+  .form {
+    .drag-banner {
+      display: flex;
+      justify-content: center;
+
+      label {
+        width: 65%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .banner-form__img {
+          width: 100%;
+          aspect-ratio: 800 / 494;
+          background-color: var(--kt-gray-200);
+          position: relative;
+
+          .image-value {
+            position: absolute;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+
+          .placeholder {
+            position: absolute;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            background-color: var(--kt-gray-200);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            .MuiLinearProgress-root {
+              margin-top: 8px;
+              width: 75%;
+            }
+          }
+        }
+      }
+    }
+  }
+}

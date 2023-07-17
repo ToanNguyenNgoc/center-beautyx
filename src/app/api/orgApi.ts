@@ -1,7 +1,7 @@
-import axiosClient from "./axios";
 import { pickBy, identity } from 'lodash';
 import { AUTH_LOCATION } from "./config_header";
 import { AUTH_HEADER_PARAM_GET } from './config_header'
+import { axiosClient } from 'configs';
 
 
 class Organization {

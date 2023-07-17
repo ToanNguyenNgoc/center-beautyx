@@ -1,4 +1,4 @@
-import axiosClient from "./axios";
+import { axiosClient } from "configs";
 import { AUTH_HEADER } from "./config_header";
 
 class Media {

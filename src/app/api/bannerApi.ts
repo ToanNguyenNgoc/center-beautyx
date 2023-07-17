@@ -1,9 +1,9 @@
-import axiosClient from "./axios"
 import { AUTH_HEADER } from "./config_header"
 import { API_ROUTE } from "./api-route";
 import { pickBy, identity } from "lodash"
 import { ResponseDetail, ResponseList } from "@types";
 import { IBanner } from "app/interface";
+import { axiosClient } from "configs";
 
 class BannerApi {
   banners = () => {

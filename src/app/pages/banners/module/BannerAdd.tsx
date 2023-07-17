@@ -128,12 +128,20 @@ function BannerAdd() {
                                     <div className='banner-form__img'>
                                         <img src={formik.values.imageURL === "" ? IMGS.imgPlaceHolder : formik.values.imageURL} alt="" className="image-value" />
                                         {
+                                            isLoading &&
+                                            <div className="placeholder">
+                                                <span>
+                                                    Đang tải lên
+                                                </span>
+                                                <LinearProgress />
+                                            </div>
+                                        }
+                                        {
                                             formik.values.imageURL === "" &&
                                             <div className="placeholder">
                                                 <span>
-                                                    {isLoading ? 'Đang tải' : 'Kéo thả hình ảnh vào đây hoặc Click để chọn hình ảnh'}
+                                                    Kéo thả hình ảnh vào đây hoặc Click để chọn hình ảnh
                                                 </span>
-                                                {isLoading && <LinearProgress />}
                                             </div>
                                         }
                                     </div>
@@ -274,7 +282,7 @@ const RenderElement: FC<RenderElementProps> = ({ formik, origin, setOrigin, bann
             callBack(data) {
                 formik.setFieldValue('url', data[0]?.original_url)
             },
-            version: 'media.beautyx'
+            version: 'api.beautyx'
         })
     }
     const { isYoutubeLink, embedLink } = testLinkYoutube(formik.values.url)
@@ -282,7 +290,7 @@ const RenderElement: FC<RenderElementProps> = ({ formik, origin, setOrigin, bann
     return (
         <div className='mt-8'>
             {
-                (type === BANNER_TYPE.SEARCH_RESULT || type === BANNER_TYPE.WEB || type === BANNER_TYPE.POPUP) &&
+                (type === BANNER_TYPE.SEARCH_RESULT || type === BANNER_TYPE.WEB || type === BANNER_TYPE.POPUP || type === BANNER_TYPE.DISCOUNT) &&
                 <div className="col">
                     <label className="filter-row_label">Đường dẫn</label>
                     <input

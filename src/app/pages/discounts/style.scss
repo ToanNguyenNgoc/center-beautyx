@@ -1,10 +1,11 @@
-.tb-control{
-  .MuiButtonBase-root{
+.tb-control {
+  .MuiButtonBase-root {
     padding: 0px;
     width: 38px;
     height: 38px;
     min-width: unset;
-    .bi-download{
+
+    .bi-download {
       margin: 0px !important;
     }
   }
@@ -41,6 +42,18 @@
           border: none !important;
         }
       }
+    }
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .filter-cnt {
+    flex-direction: column;
+
+    .filter-row {
+      grid-gap: 8px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 }

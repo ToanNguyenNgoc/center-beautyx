@@ -1,18 +1,17 @@
 import { AUTH_LOCAL_TOKEN } from 'app/modules/auth';
 import axios from 'axios'
+import { baseURL } from 'configs/axios.config';
 import queryString from 'query-string'
 
-// export const baseURL = process.env.REACT_APP_API_URL_DEV;
-export const baseURL = process.env.REACT_APP_API_URL ?? process.env.REACT_APP_API_LIVE
-const axiosClient = axios.create({
-  baseURL: baseURL,
+export const axiosV3Client = axios.create({
+  baseURL: baseURL?.replace('v1', 'v3'),
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
   paramsSerializer: (params) => queryString.stringify(params),
 })
-axiosClient.interceptors.request.use(async (config) => {
+axiosV3Client.interceptors.request.use(async (config) => {
   const session = window.sessionStorage.getItem(AUTH_LOCAL_TOKEN);
   const local = localStorage.getItem(AUTH_LOCAL_TOKEN)
   config = {
@@ -34,5 +33,3 @@ axios.interceptors.response.use(
     throw error
   }
 )
-
-export default axiosClient

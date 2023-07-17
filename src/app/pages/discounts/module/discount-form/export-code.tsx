@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { LoadingButton } from "@mui/lab";
-import { ReqDiscountCode } from "@types";
+import { QrDiscountCode } from "@types";
 import { discountsApi } from "app/api";
 import { ICouponCodeCampaign, IDiscountPar } from "app/interface";
 import { FC, useEffect, useState } from "react";
@@ -22,7 +22,7 @@ export const ExportCode: FC<Props> = ({ discount, title = ' Xuất mã giảm gi
   const [codes, setCodes] = useState<ICouponCodeCampaign[]>([])
   const { mutate, data, isLoading } = useMutation({
     mutationKey: ['GET_CODE', discount.uuid],
-    mutationFn: (qr: ReqDiscountCode) => discountsApi.getCodeIsCampaign({
+    mutationFn: (qr: QrDiscountCode) => discountsApi.getCodeIsCampaign({
       uuid: discount.uuid,
       page: qr.page,
       limit: limit

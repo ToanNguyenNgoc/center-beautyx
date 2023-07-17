@@ -16,13 +16,15 @@ import { MetronicI18nProvider } from './_metronic/i18n/Metronici18n'
 import './_metronic/assets/sass/style.scss'
 import './_metronic/assets/sass/plugins.scss'
 import './_metronic/assets/sass/style.react.scss'
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 import { AppRoutes } from './app/routing/AppRoutes'
 import { AuthProvider, setupAxios } from './app/modules/auth'
 import AppProvider from 'context/AppProvider'
 //config SWR
 import { SWRConfig } from 'swr'
 import { AUTH_HEADER } from 'app/api/config_header'
-import axiosClient from 'app/api/axios';
+import { axiosClient } from 'configs';
 /**
  * Creates `axios-mock-adapter` instance for provided `axios` instance, add
  * basic Metronic mocks and returns it.

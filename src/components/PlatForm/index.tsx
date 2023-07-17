@@ -13,37 +13,37 @@ export const FlatFormOrder = (props: IProps) => {
     const onCheckPlatForm = () => {
         switch (platForm) {
             case PLAT_FORM.BEAUTYX:
-                return <li className='plat-form-item'>
+                return <span className='plat-form-item'>
                     {platForm}{element}
-                </li>;
+                </span>;
             case PLAT_FORM.BEAUTYX_MOBILE:
-                return <li className='plat-form-item' style={{ backgroundColor: "var(--beautyx-mb)" }} >
+                return <span className='plat-form-item' style={{ backgroundColor: "var(--beautyx-mb)" }} >
                     {platForm}{element}
-                </li>
+                </span>
             case PLAT_FORM.MOMO:
-                return <li className='plat-form-item' style={{ backgroundColor: "var(--momo)" }}>
+                return <span className='plat-form-item' style={{ backgroundColor: "var(--momo)" }}>
                     {platForm}{element}
-                </li>
+                </span>
             case PLAT_FORM.MBBANK:
-                return <li className='plat-form-item' style={{ backgroundColor: "var(--bs-green)" }}>
+                return <span className='plat-form-item' style={{ backgroundColor: "var(--bs-green)" }}>
                     {platForm}{element}
-                </li>
+                </span>
             case PLAT_FORM.TIKI:
-                return <li className='plat-form-item' style={{ backgroundColor: "var(--tiki)" }}>
+                return <span className='plat-form-item' style={{ backgroundColor: "var(--tiki)" }}>
                     {platForm}{element}
-                </li>
+                </span>
             case PLAT_FORM.SHOPEE:
-                return <li className='plat-form-item' style={{ backgroundColor: "var(--orange)" }}>
+                return <span className='plat-form-item' style={{ backgroundColor: "var(--orange)" }}>
                     SHOPEE
-                </li>
+                </span>
             case PLAT_FORM.VINID:
-                return <li className='plat-form-item' style={{ backgroundColor: "#DC2222" }}>
+                return <span className='plat-form-item' style={{ backgroundColor: "#DC2222" }}>
                     VINID
-                </li>
+                </span>
             default:
-                return <li className='plat-form-item'>
+                return <span className='plat-form-item'>
                     Tất cả{element}
-                </li>;
+                </span>;
 
         }
     }

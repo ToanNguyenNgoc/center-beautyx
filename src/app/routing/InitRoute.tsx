@@ -19,6 +19,9 @@ const DiscountsPage = lazy(() => import("../pages/discounts/index"))
 const DiscountsDetailPage = lazy(() => import("../pages/discounts/module/discount-detail"))
 const DiscountsFormPage = lazy(() => import("../pages/discounts/module/discount-form"))
 
+const PromotionsPage = lazy(() => import("../pages/promotions"))
+const PromotionFormPage = lazy(() => import("../pages/promotions/module/promotion-form"))
+
 const OrdersPage = lazy(() => import('../pages/orders/index'))
 const UsersPage = lazy(() => import('../pages/users'))
 const Organizations = lazy(() => import('../pages/organizations'))
@@ -69,6 +72,19 @@ const InitRoute: any[] = [
     {
         path: "pages/discounts-form/:id",
         element: <DiscountsFormPage />
+    },
+    //promotion
+    {
+        path: "pages/promotions",
+        element: <PromotionsPage />
+    },
+    {
+        path: "pages/promotions/form",
+        element: <PromotionFormPage />
+    },
+    {
+        path: "pages/promotions/form/:id",
+        element: <PromotionFormPage />
     },
     //order
     {

@@ -1,11 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, MenuItem, Select, TextField } from '@mui/material';
+import { Box, MenuItem, Select } from '@mui/material';
 import React, { useState } from 'react';
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { format } from 'date-fns';
-import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
-import { AppSnack, FlatFormOrder, SelectionOrgMultiple, XSwitch } from 'components'
+import { AppSnack, FlatFormOrder, SelectionOrgMultiple, XDateRangePicker, XSwitch } from 'components'
 import moment from 'moment';
 import { useMutation } from 'react-query';
 import { ReqDiscountBody } from '@types';
@@ -17,6 +15,7 @@ import {
     DISCOUNT_TYPE,
     DISCOUNT_UNIT,
     DISCOUNT_UNIT_ARR,
+    PLAT_FORM,
     PLAT_FORM_ARR,
     formatPrice
 } from 'app/util';
@@ -45,10 +44,10 @@ function Form(props: IProps) {
     //handle submit form
     //[HANDLE POST]
     const { mutate, isLoading } = useMutation({
-        mutationFn: (body: ReqDiscountBody) => discountsApi.postDiscount(body),
+        mutationFn: (body: ReqDiscountBody) => discount ? discountsApi.putDiscount(discount.id, body) : discountsApi.postDiscount(body),
         onSuccess: (data) => {
             resultLoad({
-                message: 'Tạo thành công',
+                message: discount ? 'Cập nhật thành công' : 'Tạo thành công',
                 color: 'success'
             })
             // const uuid = data.data?.context?.uuid
@@ -78,8 +77,8 @@ function Form(props: IProps) {
             discount_value: isForm === "EDIT" ? discount?.discount_value : "",
             organizations: isForm === "EDIT" ? discount?.organizations : [],
             total: (isForm === "EDIT" && discount?.total) ? discount?.total : "",
-            valid_from: (isForm === "EDIT" && discount?.valid_from) ? discount?.valid_from : "",
-            valid_util: (isForm === "EDIT" && discount?.valid_util) ? discount?.valid_util : "",
+            valid_from: (isForm === "EDIT" && discount?.valid_from) ? discount?.valid_from : moment().format('YYYY-MM-DD HH:mm:ss'),
+            valid_util: (isForm === "EDIT" && discount?.valid_util) ? discount?.valid_util : moment().format('YYYY-MM-DD HH:mm:ss'),
             minimum_order_value: (isForm === "EDIT" && discount?.maximum_discount_value) ? discount?.maximum_discount_value : "",
             limit: (isForm === "EDIT" && discount?.limit) ? discount?.limit : ""
         },
@@ -445,28 +444,14 @@ function Form(props: IProps) {
                         />
                     </div>
                     <div className="wrap-item wrap-item-col-4">
-                        <label className="form-label">Thời gian áp dụng</label>
-                        <DateRangePicker
-                            inputFormat="dd/MM/yyyy"
-                            value={[
-                                formik.values.valid_from ? new Date(formik.values.valid_from) : "",
-                                formik.values.valid_util ? new Date(formik.values.valid_util) : ""
-                            ]}
-                            onChange={(newValue) => {
-                                const startDate: any = newValue[0]
-                                const endDate: any = newValue[1]
-                                try {
-                                    formik.setFieldValue("valid_from", format(startDate, "yyyy-MM-dd 00:00:00"))
-                                    formik.setFieldValue("valid_util", format(endDate, "yyyy-MM-dd 00:00:00"))
-                                } catch (error) { }
+                        <XDateRangePicker
+                            minDate={new Date()}
+                            startDate={new Date(formik.values.valid_from)}
+                            endDate={new Date(formik.values.valid_util)}
+                            onChange={(e) => {
+                                formik.setFieldValue('valid_from', moment(e.selection.startDate).format('YYYY-MM-DD HH:mm:ss'))
+                                formik.setFieldValue('valid_util', moment(e.selection.endDate).format('YYYY-MM-DD HH:mm:ss'))
                             }}
-                            renderInput={(startProps, endProps) => (
-                                <React.Fragment>
-                                    <TextField {...startProps} label="" />
-                                    <Box sx={{ mx: 1 }}> đến </Box>
-                                    <TextField {...endProps} label="" />
-                                </React.Fragment>
-                            )}
                         />
                     </div>
                 </div>
@@ -487,12 +472,11 @@ function Form(props: IProps) {
                         variant='contained'
                         size="large"
                         color="success"
-                        disabled={isForm === 'ADD' ? false : true}
                     >
                         Lưu thay đổi
                     </LoadingButton>
                     {
-                        discount &&
+                        (discount && (discount.platform === PLAT_FORM.SHOPEE || discount.platform === PLAT_FORM.VINID)) &&
                         <ExportCode discount={discount} />
                     }
                 </div>

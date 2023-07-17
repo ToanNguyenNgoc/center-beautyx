@@ -15,23 +15,14 @@ export type ReqDiscountBody = {
   limit?: number,
   minimum_order_value?: number
 }
-export type ReqDiscount = {
-  page?: number | string;
-  limit?: number | string;
-  'filter[platform]'?: string;
-  'filter[discount_type]'?: "SUB_TOTAL" | "FINAL_PRICE" | "PRODUCT" | "" | string;
-  'filter[organization_id]'?: number | string;
-  'filter[location]'?: string;
-  'sort'?: string;
-  'filter[filter_all]'?:boolean;
-  'append'?: "" | "user_available_purchase_count"
-}
-export type ReqDiscountDetail = {
-  id: string;
-  'filter[organization_id]'?: number | string
-}
-export type ReqDiscountCode = {
-  'page'?:number|string;
-  'limit'?:number|string;
-  'uuid'?:string
+export type ReqPromotionBody = {
+  name?: string;
+  content?: string;
+  imageURL?: string;
+  thumbnail?: string;
+  discounts?: Array<number> | Array<string>;
+  productables?: Array<number> | Array<string>;
+  is_popup?: 0 | 1;
+  valid_from?: string;
+  valid_util?: string
 }

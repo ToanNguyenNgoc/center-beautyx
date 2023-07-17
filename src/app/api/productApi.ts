@@ -1,4 +1,3 @@
-import axiosClient from './axios'
 import {pickBy, identity} from 'lodash'
 import {AUTH_HEADER_PARAM_GET} from './config_header'
 import {AUTH_LOCATION} from './config_header'
@@ -10,6 +9,7 @@ import {
     IPRODUCT_DETAIL_BY_ID,
     IPRODUCT_DETAIL_BY_ORG_ID
 } from './product_models';
+import { axiosClient } from 'configs';
 // end 
 class ProductApi {
   getByOrgId = (values: IPRODUCT_DETAIL_BY_ORG_ID) => {

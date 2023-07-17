@@ -5,7 +5,7 @@ import { useMutation } from "react-query";
 import { orgApi } from "app/api";
 import { ResponseList } from "@types";
 import { IOrganization } from "app/interface";
-import { debounce, divide } from "lodash";
+import { debounce } from "lodash";
 import { Avatar, Box, Chip, CircularProgress, MenuItem } from "@mui/material";
 
 interface SelectionOrgMultipleProps {
@@ -17,7 +17,6 @@ interface SelectionOrgMultipleProps {
 export const SelectionOrgMultiple: FC<SelectionOrgMultipleProps> = (
   { label = 'Gắn doanh nghiệp', origins = [], onChangeOrigin }
 ) => {
-  // const [origins, setOrigins] = useState<IOrganization[]>([])
   const refOrgSearch = useRef<HTMLDivElement>(null)
   const onTriggerOrgSearch = (arg: 'hide' | 'show') => {
     if (refOrgSearch.current) {

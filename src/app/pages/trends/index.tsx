@@ -1,5 +1,5 @@
 import TitlePage from 'components/TitlePage'
-import { SnackAlert, XButton, XPagination } from 'components'
+import { PageCircularProgress, SnackAlert, XPagination } from 'components'
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useFetch, useGetParamUrl, useNoti } from 'app/hooks'
@@ -14,7 +14,7 @@ function Trend() {
   const navigate = useNavigate()
   const location = useLocation()
   const query: any = useGetParamUrl()
-  const { totalPage, response } = useFetch(true, `${API_3RD.TRENDS}?page=${query?.page ?? 1}&include=services`)
+  const { totalPage, response, isValidating } = useFetch(true, `${API_3RD.TRENDS}?page=${query?.page ?? 1}&include=services`)
   const onChangePage = (page: number) => {
     navigate({
       pathname: location.pathname,
@@ -61,6 +61,7 @@ function Trend() {
                 ))}
               </tbody>
             </table>
+            <PageCircularProgress loading={isValidating} />
           </div>
         </div>
       </div>
@@ -105,9 +106,9 @@ const TrendRow = ({ item }: { item: ITrend }) => {
           </div>
         </td>
         <td>
-        <div className='symbol symbol-75px me-5'>
-              <img style={{objectFit:'contain'}} src={toAbsoluteUrl(item.image_thumb)} alt='' />
-            </div>
+          <div className='symbol symbol-75px me-5'>
+            <img style={{ objectFit: 'contain' }} src={toAbsoluteUrl(item.image_thumb)} alt='' />
+          </div>
         </td>
         <td>
           <span className='text-dark fw-bold d-block fs-6'>

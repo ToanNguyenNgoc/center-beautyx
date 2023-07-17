@@ -1,5 +1,4 @@
-import axios from "axios";
-import axios3rdClient, { mediaBaseURL } from "./client";
+import axios3rdClient from "./client";
 import { ResponseDetail } from "@types";
 import { ITrend } from "app/pages/trends/trend.interface";
 
@@ -7,8 +6,8 @@ class Request {
     login = (body: { email: string, password: string }) => {
         return axios3rdClient.post('/auth/login', body)
     }
-    mediaCloud = (formData: FormData) => axios.post(`${mediaBaseURL}/media/cloud`, formData)
-    media = (formData: FormData) => axios.post(`${mediaBaseURL}/media`, formData)
+    mediaCloud = (formData: FormData) => axios3rdClient.post(`/media/cloudinary`, formData)
+    media = (formData: FormData) => axios3rdClient.post(`/upload/media`, formData)
     trend = (id: number | string) => {
         return axios3rdClient.get(`/trends/${id}`, {
             params: {

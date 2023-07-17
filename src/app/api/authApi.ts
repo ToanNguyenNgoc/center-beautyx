@@ -1,8 +1,8 @@
-import axiosClient from "./axios";
 import { AUTH_HEADER } from "./config_header";
 import {AUTH_LOCAL_TOKEN} from '../modules/auth/core/AuthHelpers';
 
 import {ILOGIN,IPUT_PROFILE,IFORGOT,IREGISTER} from './interface';
+import { axiosClient } from "configs";
 class Auth {
   login = (values: ILOGIN) => {
     const url = `/auth/login`;

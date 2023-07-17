@@ -1,0 +1,37 @@
+.range-date-cnt {
+  .date {
+    max-width: 332px;
+    cursor: pointer;
+    position: relative;
+
+    .date-input {
+      .date-input-cnt {
+        width: calc(50% - 8px);
+        height: 100%
+      }
+    }
+
+    .date-picker {
+      position: absolute;
+      width: 100%;
+      margin-top: 20px;
+      visibility: hidden;
+      opacity: 0;
+      transition: all .4s;
+      z-index: 10;
+
+      .rdrDateRangePickerWrapper {
+        .rdrDefinedRangesWrapper {
+          display: none;
+        }
+      }
+    }
+
+    .date-picker-act {
+      margin-top: 0px;
+      opacity: 1;
+      visibility: visible;
+      transition: all .4s;
+    }
+  }
+}
