@@ -6,7 +6,6 @@ import { LayoutProvider, LayoutSplashScreen } from '../_metronic/layout/core'
 import { MasterInit } from '../_metronic/layout/MasterInit'
 import { AuthInit } from './modules/auth';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { requestForToken } from 'configs/firebase.config'
 
 const App = () => {
   // requestForToken()
