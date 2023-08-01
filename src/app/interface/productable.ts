@@ -2,25 +2,25 @@ import { IOrganization } from "./organization";
 
 export interface Media {
   id: number;
-  model_type: string;
+  model_type?: string;
   model_id: number;
-  uuid: number;
-  collection_name: number;
-  name: number;
-  file_name: string;
+  uuid?: number;
+  collection_name?: number;
+  name?: number;
+  file_name?: string;
   mime_type: string;
-  disk: string;
-  conversions_disk: string;
-  size: number;
-  manipulations: any[];
-  custom_properties: any[];
-  generated_conversions: any[];
-  responsive_images: any[];
-  order_column: number;
-  created_at: string;
-  updated_at: string;
+  disk?: string;
+  conversions_disk?: string;
+  size?: number;
+  manipulations?: any[];
+  custom_properties?: any[];
+  generated_conversions?: any[];
+  responsive_images?: any[];
+  order_column?: number;
+  created_at?: string;
+  updated_at?: string;
   original_url: string;
-  preview_url: string;
+  preview_url?: string;
 }
 
 export interface Productable {

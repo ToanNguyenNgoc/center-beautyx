@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { PageTitle } from '../../../_metronic/layout/core'
 import {
@@ -8,7 +8,7 @@ import {
   ListsWidget5,
   MixedWidget8,
 } from '../../../_metronic/partials/widgets'
-import { TopProductWidget, TopContract, OrderWidget, TopServices } from './components';
+import { TopProductWidget, TopContract, OrderWidget, TopServices, Customer } from './components';
 const DashboardPage: FC = () => (
   <>
     <div className='row g-5 gx-xxl-8'>
@@ -23,7 +23,7 @@ const DashboardPage: FC = () => (
       <div className='col-xxl-8'>
         <TopContract className='card-xxl-stretch mb-5 mb-xxl-8' />
       </div>
-      <div className='col-xxl-7'>
+      {/* <div className='col-xxl-7'>
         <TopServices className='card-xxl-stretch mb-5 mb-xxl-8' />
       </div>
       <div className='col-xxl-5'>
@@ -32,7 +32,10 @@ const DashboardPage: FC = () => (
           chartColor='success'
           chartHeight='150px'
         />
-      </div>
+      </div> */}
+    </div>
+    <div>
+      <Customer />
     </div>
     {/* begin::Row */}
     <div className='row gy-5 g-xl-8'>

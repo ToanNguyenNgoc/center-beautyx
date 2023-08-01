@@ -90,6 +90,11 @@ export function AsideMenuMain() {
           title='Hợp đồng'
         />
         <AsideMenuItem
+          to='pages/customers'
+          icon='/media/icons/duotune/communication/com013.svg'
+          title='Khách hàng'
+        />
+        <AsideMenuItem
           to='pages/trends'
           icon='/media/icons/duotune/files/fil004.svg'
           title='Trends'
@@ -111,12 +116,12 @@ export function AsideMenuMain() {
         }
         <AsideMenuItemWithSub icon='/media/icons/duotune/coding/cod002.svg' to='/crafted/pages/profile' title='Cộng đồng & kiểm duyệt'>
           <AsideMenuItem
-            to='pages/trends'
+            to='pages/community'
             icon='/media/icons/duotune/files/fil004.svg'
             title='Cộng đồng'
           />
           <AsideMenuItem
-            to='pages/trends'
+            to='pages/community'
             icon='/media/icons/duotune/files/fil004.svg'
             title='Kiểm duyệt bài viết'
           />

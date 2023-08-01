@@ -98,9 +98,11 @@ function BannerAdd() {
         handlePostMedia({
             e: eF,
             callBack(data) {
+                console.log(data)
                 formik.setFieldValue('imageURL', data[0]?.original_url ?? '')
             },
-            version: 'myspa'
+            version: 'myspa',
+            resetOriginalResult:true
         })
     }
     return (

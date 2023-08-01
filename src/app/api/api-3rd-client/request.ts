@@ -7,7 +7,7 @@ class Request {
         return axios3rdClient.post('/auth/login', body)
     }
     mediaCloud = (formData: FormData) => axios3rdClient.post(`/media/cloudinary`, formData)
-    media = (formData: FormData) => axios3rdClient.post(`/upload/media`, formData)
+    media = (formData: FormData) => axios3rdClient.post(`/upload/media`, formData).then(res => res.data)
     trend = (id: number | string) => {
         return axios3rdClient.get(`/trends/${id}`, {
             params: {
@@ -17,7 +17,7 @@ class Request {
     }
     postTrend = (values: any) => axios3rdClient.post('/trends', values)
     putTrend = (id: string, values: any) => axios3rdClient.put(`/trends/${id}`, values)
-    refreshComment = (id: string) => axios3rdClient.get(`/tiktok/refresh_comment/${id}`)
+    refreshComment = (id: string) => axios3rdClient.get(`/tiktok/refresh_trend/${id}`)
 }
 export const request3rdApi = new Request();
 export default request3rdApi

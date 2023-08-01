@@ -22,8 +22,11 @@ const DiscountsFormPage = lazy(() => import("../pages/discounts/module/discount-
 const PromotionsPage = lazy(() => import("../pages/promotions"))
 const PromotionFormPage = lazy(() => import("../pages/promotions/module/promotion-form"))
 
+const CommunityPage = lazy(() => import("../pages/community"))
+const CommunityFormPage = lazy(() => import('../pages/community/module/community-form'))
+
 const OrdersPage = lazy(() => import('../pages/orders/index'))
-const UsersPage = lazy(() => import('../pages/users'))
+const CustomersPage = lazy(() => import('../pages/customers'))
 const Organizations = lazy(() => import('../pages/organizations'))
 const OrganizationsDetailPage = lazy(() => import('../pages/organizations/module/organizations-detail'))
 const ServicesPage = lazy(() => import('../pages/services'))
@@ -79,22 +82,31 @@ const InitRoute: any[] = [
         element: <PromotionsPage />
     },
     {
-        path: "pages/promotions/form",
+        path: "pages/promotions-form",
         element: <PromotionFormPage />
     },
     {
-        path: "pages/promotions/form/:id",
+        path: "pages/promotions-form/:id",
         element: <PromotionFormPage />
+    },
+    //community
+    {
+        path:'pages/community-form',
+        element:<CommunityFormPage/>
+    },
+    {
+        path:"pages/community",
+        element:<CommunityPage/>
     },
     //order
     {
         path: "pages/orders",
         element: <OrdersPage />
     },
-    //user
+    //customers
     {
-        path: "pages/users",
-        element: <UsersPage />
+        path: "pages/customers",
+        element: <CustomersPage />
     },
     //organization
     {

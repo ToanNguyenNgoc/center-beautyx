@@ -1,0 +1,95 @@
+.filter-cnt {
+  width: 100%;
+  padding: 8px 29px 6px 29px;
+
+  .filter-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .filter-row {
+    display: flex;
+    justify-content: flex-end;
+
+    .filter-row_label {
+      font-weight: 500;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+  }
+
+  .filter-row_platform {
+    display: flex;
+    flex-direction: column;
+    margin: 0px 8px;
+
+    .MuiFormControl-root {
+      margin: 0px;
+
+      .MuiInputBase-root {
+        background-color: var(--kt-gray-100) !important;
+        border-radius: 0.475rem;
+
+        .MuiOutlinedInput-notchedOutline {
+          border: none !important;
+        }
+      }
+    }
+  }
+
+  .filter-row_picker {
+    width: 350px;
+    padding: 0px 8px;
+
+    .form-label {
+      margin-bottom: 3px;
+    }
+
+    .date-input-cnt {
+      .form-control {
+        margin-bottom: 0px !important;
+        padding: 6px 14px;
+      }
+    }
+
+    .date {
+
+      .date-picker-act {
+        margin-top: 10px;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .filter-cnt {
+    flex-direction: column;
+
+    .filter-right {
+      flex-direction: column;
+    }
+
+    .filter-row {
+      grid-gap: 8px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .filter-row_picker {
+      width: 100%;
+      margin-top: 2px;
+      padding: 0px;
+      padding: 0px;
+
+      .date {
+        .date-picker {
+          margin-left: 0px;
+        }
+
+        .date-picker-act {
+          margin-top: 10px;
+        }
+      }
+    }
+  }
+}

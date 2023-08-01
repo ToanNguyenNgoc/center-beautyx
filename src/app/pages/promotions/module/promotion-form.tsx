@@ -8,7 +8,7 @@ import { useFormik } from "formik";
 import { LoadingButton } from "@mui/lab";
 import moment from "moment";
 import { useMessage, usePostMedia } from "app/hooks";
-import { LinearProgress } from "@mui/material";
+import { CircularProgress, LinearProgress } from "@mui/material";
 import { useMutation, useQuery } from "react-query";
 import { QR_KEY } from "common";
 import { promotionApi } from "app/api";
@@ -17,14 +17,15 @@ import { IDiscountPar, Productable } from "app/interface";
 import { AxiosError } from "axios";
 import * as Yup from "yup"
 import '../style.scss'
+import { identity, pickBy } from "lodash";
 
 function PromotionForm() {
   const params: any = useParams()
   const { handlePostMedia, isLoading } = usePostMedia()
   const { handlePostMedia: handlePostThumbnail, isLoading: isLoadingThumbnail } = usePostMedia()
   const { resultLoad, noti, onCloseNoti } = useMessage()
-  const { mutate, isLoading: isLoadingMutate } = useMutation({
-    mutationFn: (body: ReqPromotionBody) => params.id ? promotionApi.put(params.id, body) : promotionApi.pot(body),
+  const { mutateAsync, isLoading: isLoadingMutate } = useMutation({
+    mutationFn: (body: ReqPromotionBody) => params.id ? promotionApi.put(params.id, body) : promotionApi.post(body),
     onSuccess: () => resultLoad({
       message: params.id ? 'Cập nhật promotion thành công' : 'Tạo mới promotion thành công',
       color: 'success'
@@ -41,8 +42,10 @@ function PromotionForm() {
     initialValues: {
       name: '',
       content: '',
-      imageURL: '',
-      thumbnail: '',
+      media_url: '',
+      main_media_id: undefined,
+      thumbnail_url: '',
+      thumbnail_media_id: undefined,
       is_popup: false,
       valid_from: moment().format('YYYY-MM-DD HH:mm:ss'),
       valid_util: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -50,16 +53,20 @@ function PromotionForm() {
       productables: []
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Nhập tên cả promotion'),
-      imageURL: Yup.string().required('Upload hình của promotion')
+      name: Yup.string().required('Nhập tên của promotion'),
+      media_url: Yup.string().required('Upload hình của promotion')
     }),
-    onSubmit: (values) => {
-      mutate({
+    onSubmit:async  (values) => {
+      const body = pickBy({
         ...values,
-        is_popup: values.is_popup ? 1 : 0,
         productables: values.productables.map((i: Productable) => i.id),
-        discounts: values.discounts.map((i: IDiscountPar) => i.id)
-      })
+        discounts: values.discounts.map((i: IDiscountPar) => i.id),
+      }, identity)
+      const res = await mutateAsync({ ...body, is_popup: values.is_popup ? 1 : 0, })
+      if(res){
+        formik.setFieldValue('main_media_id',undefined)
+        formik.setFieldValue('thumbnail_media_id',undefined)
+      }
     }
   })
   const { refetch, isFetching } = useQuery({
@@ -70,8 +77,8 @@ function PromotionForm() {
       formik.setFieldValue('is_popup', data.context.is_popup === 1 ? true : false)
       formik.setFieldValue('name', data.context.name)
       formik.setFieldValue('content', data.context.content)
-      formik.setFieldValue('imageURL', data.context.imageURL)
-      formik.setFieldValue('thumbnail', data.context.thumbnail)
+      formik.setFieldValue('media_url', data.context.media_url)
+      formik.setFieldValue('thumbnail_url', data.context.thumbnail_url)
       formik.setFieldValue('valid_from', data.context.valid_from)
       formik.setFieldValue('valid_util', data.context.valid_util)
       formik.setFieldValue('productables', data.context.productables)
@@ -79,7 +86,7 @@ function PromotionForm() {
     }
   })
   const handleChangeMedia = (file: File) => {
-    formik.setFieldValue('imageURL', '')
+    formik.setFieldValue('media_url', '')
     const eF: any = {
       target: {
         files: [file]
@@ -88,13 +95,14 @@ function PromotionForm() {
     handlePostMedia({
       e: eF,
       callBack(data) {
-        formik.setFieldValue('imageURL', data[0]?.original_url ?? '')
+        formik.setFieldValue('media_url', data[0]?.original_url ?? '')
+        formik.setFieldValue('main_media_id', data[0]?.model_id)
       },
       version: 'myspa'
     })
   }
   const handleChangeThumbnail = (file: File) => {
-    formik.setFieldValue('thumbnail', '')
+    formik.setFieldValue('', '')
     const eF: any = {
       target: {
         files: [file]
@@ -103,7 +111,8 @@ function PromotionForm() {
     handlePostThumbnail({
       e: eF,
       callBack(data) {
-        formik.setFieldValue('thumbnail', data[0]?.original_url ?? '')
+        formik.setFieldValue('thumbnail_url', data[0]?.original_url ?? '')
+        formik.setFieldValue('thumbnail_media_id', data[0]?.model_id)
       },
       version: 'myspa'
     })
@@ -141,14 +150,18 @@ function PromotionForm() {
                   types={FILE_IMG_TYPE}
                   children={
                     <div className='banner-form__img'>
-                      <img src={formik.values.imageURL !== "" ? formik.values.imageURL : IMGS.imgPlaceHolder} alt="" className="image-value" />
+                      <img src={formik.values.media_url !== "" ? formik.values.media_url : IMGS.imgPlaceHolder} alt="" className="image-value" />
                       {
-                        formik.values.imageURL === "" &&
+                        isLoading &&
                         <div className="placeholder">
-                          <span>
-                            {isLoading ? 'Đang tải' : 'Kéo thả hình ảnh vào đây hoặc Click để chọn hình ảnh'}
-                          </span>
-                          {isLoading && <LinearProgress />}
+                          <span>Đang tải</span>
+                          <CircularProgress />
+                        </div>
+                      }
+                      {
+                        formik.values.media_url === "" &&
+                        <div className="placeholder">
+                          <span>Kéo thả hình ảnh vào đây hoặc Click để chọn hình ảnh</span>
                         </div>
                       }
                     </div>
@@ -156,16 +169,17 @@ function PromotionForm() {
                 />
               </div>
               <input
-                value={formik.values.imageURL}
-                onChange={formik.handleChange}
+                value={formik.values.media_url || ''}
+                // onChange={formik.handleChange}
+                readOnly
                 type="text"
-                name="imageURL"
+                name="image_url"
                 className="form-control form-control-solid mt-4 mb-2"
                 placeholder="Hoặc link hình ảnh...."
               />
               {
-                formik.errors.imageURL && formik.touched.imageURL &&
-                <span className="text-danger">{formik.errors.imageURL}</span>
+                formik.errors.media_url && formik.touched.media_url &&
+                <span className="text-danger">{formik.errors.media_url}</span>
               }
             </div>
             <div className="required form-label">Thumbnail</div>
@@ -179,9 +193,9 @@ function PromotionForm() {
                 types={FILE_IMG_TYPE}
                 children={
                   <div className='banner-form__img'>
-                    <img src={formik.values.thumbnail !== "" ? formik.values.thumbnail : IMGS.imgPlaceHolder} alt="" className="image-value" />
+                    <img src={formik.values.thumbnail_url !== "" ? formik.values.thumbnail_url : IMGS.imgPlaceHolder} alt="" className="image-value" />
                     {
-                      formik.values.thumbnail === "" &&
+                      formik.values.thumbnail_url === "" &&
                       <div className="placeholder">
                         <span>
                           {isLoadingThumbnail ? 'Đang tải' : 'Kéo thả hình ảnh vào đây hoặc Click để chọn hình ảnh'}
@@ -194,10 +208,11 @@ function PromotionForm() {
               />
             </div>
             <input
-              value={formik.values.thumbnail}
+              value={formik.values.thumbnail_url || ''}
               onChange={formik.handleChange}
+              readOnly
               type="text"
-              name="thumbnail"
+              name="thumbnail_url"
               className="form-control form-control-solid mt-4 mb-2"
               placeholder="Hoặc link hình ảnh...."
             />

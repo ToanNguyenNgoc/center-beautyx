@@ -12,7 +12,11 @@ interface XDateRangePickerProps {
   maxDate?: Date;
   startDate?: Date;
   endDate?: Date;
-  onChange?: (e: RangeKeyDict) => void
+  onChange?: (e: RangeKeyDict) => void;
+  onApply?: () => void;
+  onCancel?: () => void;
+  showBot?: boolean;
+  init?: boolean
 }
 
 export const XDateRangePicker: FC<XDateRangePickerProps> = ({
@@ -21,7 +25,8 @@ export const XDateRangePicker: FC<XDateRangePickerProps> = ({
   minDate, maxDate,
   startDate = new Date(),
   endDate = new Date(),
-  onChange = () => { }
+  onChange = () => { }, onApply = () => { }, onCancel = () => { }, showBot = false,
+  init = false
 }) => {
   const refDatePicker = useRef<HTMLDivElement>(null)
   const onToggleDatePicker = (arg: 'show' | 'hide') => {
@@ -43,13 +48,13 @@ export const XDateRangePicker: FC<XDateRangePickerProps> = ({
         <div onClick={() => onToggleDatePicker('show')} className="date-input d-flex align-items-center justify-content-between">
           <div className="date-input-cnt">
             <div className="form-control form-control-solid mb-4">
-              {moment(startDate).format('DD/MM/YYYY')}
+              {init ? "--" : moment(startDate).format('DD/MM/YYYY')}
             </div>
           </div>
           -
           <div className="date-input-cnt">
             <div className="form-control form-control-solid mb-4">
-              {moment(endDate).format('DD/MM/YYYY')}
+              {init ? "---" : moment(endDate).format('DD/MM/YYYY')}
             </div>
           </div>
         </div>
@@ -62,6 +67,17 @@ export const XDateRangePicker: FC<XDateRangePickerProps> = ({
             ranges={[selectionRange]}
             onChange={onChange}
           />
+          {
+            showBot &&
+            <div className="d-flex justify-content-between py-2 px-4 date-picker_bot">
+              <button onClick={() => { onApply(); onToggleDatePicker('hide') }} type="button" className="btn btn-primary">
+                Áp dụng
+              </button>
+              <button onClick={() => { onCancel(); onToggleDatePicker('hide') }} type="button" className="btn btn-light">
+                Hủy
+              </button>
+            </div>
+          }
         </Box>
       </div>
     </div>

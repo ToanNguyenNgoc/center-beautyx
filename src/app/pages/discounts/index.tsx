@@ -7,7 +7,7 @@ import FlatFormOrder from 'components/PlatForm';
 import { KTSVG } from '_metronic/helpers';
 import { IDiscountPar } from 'app/interface';
 import { PageCircularProgress, XPagination } from 'components';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { QR_KEY } from 'common';
 import { discountsApi } from 'app/api';
 import queryString from 'query-string';
@@ -47,6 +47,13 @@ function Discounts() {
       search: queryString.stringify(newQuery)
     })
   }
+  const queryClient = useQueryClient()
+  const {mutate} = useMutation({
+    mutationFn:(id:number|string) => discountsApi.deleteById(id),
+    onSuccess:()=>{
+      queryClient.invalidateQueries([QR_KEY.DISCOUNT_PAGE, query])
+    }
+  })
   return (
     <>
       <TitlePage
@@ -172,6 +179,18 @@ function Discounts() {
                                 className='svg-icon-3'
                               />
                             </button>
+                          }
+                          {
+                            // METHOD?.includes("DELETE") &&
+                            // <button
+                            //   className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
+                            //   onClick={() =>mutate(item.id)}
+                            // >
+                            //   <KTSVG
+                            //     path='/media/icons/duotune/arrows/arr015.svg'
+                            //     className='svg-icon-3'
+                            //   />
+                            // </button>
                           }
                           {
                             (item.platform === 'SHOPEE' || item.platform === 'VINID') &&

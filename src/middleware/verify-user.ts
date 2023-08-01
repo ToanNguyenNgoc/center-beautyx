@@ -19,12 +19,13 @@ export async function verifyUser(response_user: AuthModel) {
         const resUserLoginRole = window.atob(response_user.roles ?? sessionStorage.getItem(ROLE_KEY))
         const role = resUserLoginRole.slice(2, resUserLoginRole.length - 2)
         try {
-            const res_permissions = await getRoles(token)
-            const permissions: IAUTHOR[] = res_permissions.data.context
-            const USER_ROLE = permissions.find(i => i.name === role)
+            // const res_permissions = await getRoles(token)
+            // const permissions: IAUTHOR[] = res_permissions.data.context
+            // const USER_ROLE = permissions.find(i => i.name === role)
+            //[TEMPLE]:
             user_check = {
                 ...response_user,
-                ROLE: USER_ROLE
+                ROLE: []
             }
         } catch (error) { }
     }

@@ -10,10 +10,11 @@ import { formatPrice, onErrorImg } from "app/util"
 interface SelectServiceProps {
   orgsChoose?: IOrganization[],
   values: IService[],
-  setValues: (values: any) => void
+  setValues?: (values: any) => void,
+  onChangeService?: (service: IService[]) => void
 }
 
-export const SelectService = ({ orgsChoose = [], values = [], setValues }: SelectServiceProps) => {
+export const SelectService = ({ orgsChoose = [], values = [], setValues, onChangeService }: SelectServiceProps) => {
   const refBox = useRef<HTMLDivElement | null>(null)
   const selected_id = values.map(i => i.id)
   const [services, setServices] = useState<{ data: any[], load: boolean }>({ data: [], load: false })
@@ -54,26 +55,38 @@ export const SelectService = ({ orgsChoose = [], values = [], setValues }: Selec
   }
   const list = services.data?.map(i => i.services).flat() ?? []
   const onSelect = (item: IService) => {
-    setValues((prev: any) => {
-      const index = prev.findIndex((i: any) => i.id === item.id)
-      if (index < 0) {
-        prev = [...prev, item]
-        return prev
+    if (onChangeService) {
+      const iIndex = values.findIndex(i => i.id === item.id)
+      if (iIndex < 0) {
+        onChangeService([...values, item])
       } else {
-        return prev.filter((i: any) => i.id !== item.id)
+        onChangeService(values.filter(i => i.id !== item.id))
       }
-    })
+      return
+    }
+    if (setValues) {
+      setValues((prev: any) => {
+        const index = prev.findIndex((i: any) => i.id === item.id)
+        if (index < 0) {
+          prev = [...prev, item]
+          return prev
+        } else {
+          return prev.filter((i: any) => i.id !== item.id)
+        }
+      })
+      return
+    }
   }
   return (
     <div className="select-services">
-      <label className="required form-label">Sản phẩm, Dịch vụ được áp dụng</label>
+      <label className="required form-label">Sản phẩm áp dụng</label>
       <div onClick={(e) => { e.stopPropagation(); onTriggerBox('show') }} className="form-control form-control-solid ser-selected">
         {
           values.map(item => (
             <Chip
               key={item.id}
               label={`${item.service_name} | Giá gốc: ${formatPrice(item.price)}`}
-              onDelete={() => setValues((prev: any) => prev.filter((i: any) => i.id !== item.id))}
+              onDelete={() => onSelect(item)}
               size="medium"
               color="primary"
               avatar={<Avatar src={item.image_url} />}

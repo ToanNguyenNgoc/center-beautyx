@@ -24,7 +24,7 @@ function Promotions() {
         element={
           // METHOD?.includes("POST") ?
           <Link
-            to={{ pathname: "/pages/promotions/form" }}
+            to={{ pathname: "/pages/promotions-form" }}
             className="btn btn-sm btn-primary"
           >
             Tạo mới
@@ -82,7 +82,7 @@ const PromotionItem: FC<{ item: Promotion }> = ({ item }) => {
       <td>
         <div className='d-flex align-items-center'>
           <div className='symbol symbol-100px me-5'>
-            <img style={{ objectFit: 'contain' }} src={item.imageURL} alt='' />
+            <img style={{ objectFit: 'contain' }} src={item.media_url || ''} alt='' />
           </div>
         </div>
       </td>
@@ -132,7 +132,7 @@ const PromotionItem: FC<{ item: Promotion }> = ({ item }) => {
             // METHOD?.includes("UPDATE") &&
             <Link
               to={{
-                pathname: `/pages/promotions/form/${item.id}`
+                pathname: `/pages/promotions-form/${item.id}`
               }}
               aria-label='Xem chi tiết'
               className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'

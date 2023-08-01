@@ -12,6 +12,7 @@
     }
 
     .date-picker {
+      background-color: var(--white);
       position: absolute;
       width: 100%;
       margin-top: 20px;
@@ -23,6 +24,14 @@
       .rdrDateRangePickerWrapper {
         .rdrDefinedRangesWrapper {
           display: none;
+        }
+      }
+
+      .date-picker_bot {
+        button {
+          width: calc(50% - 6px);
+          padding-top: 6px !important;
+          padding-bottom: 6px !important;
         }
       }
     }

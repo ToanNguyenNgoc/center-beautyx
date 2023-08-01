@@ -1,8 +1,10 @@
+import moment from "moment";
+
+
 export const formatDate = (dateParams: string) => {
   let date = ''
   if (dateParams) {
-    const dateArr = dateParams?.split(' ')
-    const date = dateArr[0]?.split('-')?.reverse().join('/')
+    const date = moment(dateParams).format('DD/MM/YYYY')
     return date
   }
   return date
@@ -54,4 +56,16 @@ export const slugify = (name: string) => {
     .replace(/\-\-+/g, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '')
+}
+export const getRangeOfDates = (startDate: Date, endDate: Date) => {
+  const date = new Date(startDate.getTime());
+
+  const dates: Date[] = [];
+
+  while (date <= endDate) {
+    dates.push(new Date(date));
+    date.setDate(date.getDate() + 1);
+  }
+
+  return dates;
 }

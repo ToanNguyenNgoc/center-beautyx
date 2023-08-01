@@ -9,11 +9,12 @@ import { debounce } from "lodash";
 import { Avatar, Box, Chip, CircularProgress, MenuItem } from "@mui/material";
 
 interface OrgSelectProps {
+  required?: boolean
   organization_id: number | string | undefined | null
   origin: IOrganization | undefined
   setOrigin: Dispatch<SetStateAction<IOrganization | undefined>>
 }
-export const SelectionOrg: FC<OrgSelectProps> = ({ origin, setOrigin, organization_id }) => {
+export const SelectionOrg: FC<OrgSelectProps> = ({ origin, setOrigin, organization_id, required }) => {
   useQuery({
     queryKey: ['ORG_SELECTION', organization_id],
     queryFn: () => orgApi.getOrgById(organization_id).then<ResponseDetail<IOrganization>>(res => res.data),
@@ -39,7 +40,7 @@ export const SelectionOrg: FC<OrgSelectProps> = ({ origin, setOrigin, organizati
   const onChangeOrgSearch = (e: ChangeEvent<HTMLInputElement>) => debounceOrgs(e.target.value)
   return (
     <div className="col col-org">
-      <label className="filter-row_label mb-2">Gắn doanh nghiệp</label>
+      <label className={`${required && 'required'} filter-row_label mb-2`}>Gắn doanh nghiệp</label>
       <div
         onClick={(e) => { e.stopPropagation(); onTriggerOrgSearch('show') }}
         className="form-control form-control-solid"

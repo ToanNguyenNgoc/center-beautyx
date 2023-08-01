@@ -1,6 +1,6 @@
 export type QrPage = {
-  page?: number | string;
-  limit?: number | string;
+  'page'?: number | string;
+  'limit'?: number | string;
 }
 export type QrDiscount = QrPage & {
   'filter[platform]'?: string;
@@ -32,3 +32,16 @@ export type QrProductable = QrPage & {
   'sort'?: string
 }
 export type QrPromotion = QrPage
+export type QrCommunity = QrPage & {
+  'filter[organization_id]'?:number|string;
+  'filter[status]'?:boolean;
+  'filter[tag_id]'?:number|string;
+  'sort'?:'-created_at'|'created_at';
+  'append'?:string
+}
+export type QrCustomer =QrPage & {
+  'platform'?:string;
+  'from_date'?:string;
+  'to_date'?:string;
+  'sort'?:string;
+}

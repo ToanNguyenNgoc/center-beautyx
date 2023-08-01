@@ -27,6 +27,8 @@ class Discounts {
             .get(API_ROUTE.CAMPAIGN_UUID, { params: qr })
             .then<ResponseList<ICouponCodeCampaign[]>>(res => res.data.context)
     }
+    deleteById = (id: number | string) => axiosClient.delete(API_ROUTE.DISCOUNTS_ID(id))
+
 }
 export const discountsApi = new Discounts();
 export default discountsApi

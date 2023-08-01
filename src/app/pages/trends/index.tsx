@@ -1,14 +1,15 @@
 import TitlePage from 'components/TitlePage'
-import { PageCircularProgress, SnackAlert, XPagination } from 'components'
+import { AppSnack, PageCircularProgress, XPagination } from 'components'
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useFetch, useGetParamUrl, useNoti } from 'app/hooks'
+import { useFetch, useGetParamUrl, useMessage } from 'app/hooks'
 import { API_3RD } from 'app/api/api-route'
 import dayjs from 'dayjs'
 import { toAbsoluteUrl } from '_metronic/helpers'
 import { ITrend } from './trend.interface'
 import request3rdApi from 'app/api/api-3rd-client/request'
-import { Button } from '@mui/material'
+import { Button, CircularProgress } from '@mui/material'
+import { useMutation } from 'react-query'
 
 function Trend() {
   const navigate = useNavigate()
@@ -76,22 +77,15 @@ function Trend() {
 
 const TrendRow = ({ item }: { item: ITrend }) => {
   const navigate = useNavigate()
-  const { firstLoad, noti, resultLoad, onCloseNoti } = useNoti()
+  const { noti, resultLoad, onCloseNoti } = useMessage()
   const handleDetail = (serviceDetail: ITrend) => {
     navigate(`/pages/trend-form/${serviceDetail._id}`)
   }
-  const onRefreshComment = async () => {
-    firstLoad()
-    try {
-      const res = await request3rdApi.refreshComment(item._id)
-      if (res) {
-        resultLoad('Refresh comment success !')
-      }
-    } catch (error) {
-      resultLoad('Refresh comment fail !')
-    }
-  }
-
+  const { mutate, isLoading } = useMutation({
+    mutationFn: () => request3rdApi.refreshComment(item._id),
+    onSuccess: () => resultLoad({ color: 'success', message: 'Refresh trend success' }),
+    onError: () => resultLoad({ color: 'error', message: 'Refresh trend fail' })
+  })
   return (
     <>
       <tr key={item._id}>
@@ -142,18 +136,19 @@ const TrendRow = ({ item }: { item: ITrend }) => {
               <i className='bi bi-pencil-fill fs-6'></i>
             </button>
             <button
-              onClick={onRefreshComment}
-              className='btn btn-bg-light btn-color-muted btn-active-color-primary btn-sm px-4'
+              onClick={() => mutate()}
+              className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm'
             >
-              <i className="bi bi-arrow-clockwise"></i>
+              {isLoading ? <CircularProgress size={12} /> : <i className="bi bi-arrow-clockwise"></i>}
             </button>
           </div>
         </td>
       </tr>
-      <SnackAlert
+      <AppSnack
+        severity={noti.color}
+        message={noti.message}
         open={noti.openAlert}
-        onClose={onCloseNoti}
-        title={noti.message}
+        close={onCloseNoti}
       />
     </>
   )

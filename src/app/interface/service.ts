@@ -11,7 +11,7 @@ export interface IService {
   deleted: boolean | null
   description: string | null
   duration: number | null
-  id: number | null
+  id: number
   image: string | null
   image_url: string
   is_featured: false
