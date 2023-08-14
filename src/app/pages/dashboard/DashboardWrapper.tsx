@@ -9,6 +9,7 @@ import {
   MixedWidget8,
 } from '../../../_metronic/partials/widgets'
 import { TopProductWidget, TopContract, OrderWidget, TopServices, Customer } from './components';
+import { requestForToken } from 'configs';
 const DashboardPage: FC = () => (
   <>
     <div className='row g-5 gx-xxl-8'>
@@ -66,6 +67,14 @@ const DashboardPage: FC = () => (
 
 const DashboardWrapper: FC = () => {
   const intl = useIntl()
+  const getFirebaseToken = async () => {
+    const data = await requestForToken()
+    if (data)
+      console.log(data)
+  }
+  useEffect(() => {
+    getFirebaseToken()
+  }, []);
   return (
     <>
       <PageTitle breadcrumbs={[]}>{intl.formatMessage({ id: 'MENU.DASHBOARD' })}</PageTitle>

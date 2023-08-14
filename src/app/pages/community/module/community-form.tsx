@@ -40,16 +40,16 @@ const CommunityForm: FC = () => {
       services: []
     },
     onSubmit: (values) => {
-      if (values.organization) {
-        mutate({
-          content: values.content,
-          organization_id: values.organization.id,
-          media_ids: values.media.map(i => i.model_id),
-          service_ids: values.services.map(i => i.id),
-          status: 1,
-          tag_id:2
-        })
-      }
+      // if (values.organization) {
+      mutate({
+        content: values.content,
+        organization_id: values.organization?.id,
+        media_ids: values.media.map(i => i.model_id),
+        service_ids: values.services.map(i => i.id),
+        status: 1,
+        tag_id: 2
+      })
+      // }
     }
   })
   const onChangeMedia = (e: ChangeEvent<HTMLInputElement>) => {
