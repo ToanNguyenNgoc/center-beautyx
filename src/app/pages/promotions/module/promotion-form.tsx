@@ -18,6 +18,8 @@ import { AxiosError } from "axios";
 import * as Yup from "yup"
 import '../style.scss'
 import { identity, pickBy } from "lodash";
+import ReactQuill from "react-quill";
+import 'react-quill/dist/quill.snow.css';
 
 function PromotionForm() {
   const params: any = useParams()
@@ -56,16 +58,16 @@ function PromotionForm() {
       name: Yup.string().required('Nhập tên của promotion'),
       media_url: Yup.string().required('Upload hình của promotion')
     }),
-    onSubmit:async  (values) => {
+    onSubmit: async (values) => {
       const body = pickBy({
         ...values,
         productables: values.productables.map((i: Productable) => i.id),
         discounts: values.discounts.map((i: IDiscountPar) => i.id),
       }, identity)
       const res = await mutateAsync({ ...body, is_popup: values.is_popup ? 1 : 0, })
-      if(res){
-        formik.setFieldValue('main_media_id',undefined)
-        formik.setFieldValue('thumbnail_media_id',undefined)
+      if (res) {
+        formik.setFieldValue('main_media_id', undefined)
+        formik.setFieldValue('thumbnail_media_id', undefined)
       }
     }
   })
@@ -235,14 +237,7 @@ function PromotionForm() {
             </div>
             <div className="column">
               <div className="form-label">Mô tả</div>
-              <input
-                value={formik.values.content}
-                onChange={formik.handleChange}
-                type="text"
-                name="content"
-                className="form-control form-control-solid mt-4 mb-2"
-                placeholder="Mô tả promotion...."
-              />
+              <ReactQuill theme="snow" value={formik.values.content} onChange={(e) => formik.setFieldValue('content', e)} />
             </div>
             <div className="column">
               <XDateRangePicker
@@ -264,6 +259,7 @@ function PromotionForm() {
             </div>
             <div className="column mt-6">
               <SelectionDiscounts
+                filterAll={false}
                 discounts={formik.values.discounts}
                 onChangeDiscounts={(e) => formik.setFieldValue('discounts', e)}
               />

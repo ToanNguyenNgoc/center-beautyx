@@ -8,7 +8,6 @@ import { AuthInit } from './modules/auth';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 const App = () => {
-  // requestForToken()
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
       <LocalizationProvider dateAdapter={AdapterDateFns} >

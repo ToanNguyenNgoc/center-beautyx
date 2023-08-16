@@ -1,6 +1,7 @@
 import { QrCommunity, ReqPostBody, ResponseDetail, ResponseList } from "@types";
 import { Post } from "app/interface";
 import { axiosClient } from "configs";
+import { identity, pickBy } from "lodash";
 
 export const communityApi = {
   getAll: (qr: QrCommunity) => axiosClient
@@ -12,6 +13,6 @@ export const communityApi = {
     .then<ResponseDetail<Post>>(res => res.data),
 
   post: (body: ReqPostBody) => axiosClient
-    .post('/posts', body)
+    .post('/posts', pickBy(body, identity))
     .then<ResponseDetail<Post>>(res => res.data),
 }

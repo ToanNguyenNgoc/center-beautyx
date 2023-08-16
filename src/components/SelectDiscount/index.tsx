@@ -11,14 +11,16 @@ interface SelectionDiscountsProps {
   label?: string,
   required?: boolean,
   discounts?: IDiscountPar[],
-  onChangeDiscounts?: (productable: IDiscountPar[]) => void
+  onChangeDiscounts?: (productable: IDiscountPar[]) => void,
+  filterAll?:boolean
 }
 
 export const SelectionDiscounts: FC<SelectionDiscountsProps> = ({
   label = 'Gắn deal giảm giá',
   required = false,
   discounts = [],
-  onChangeDiscounts
+  onChangeDiscounts,
+  filterAll = true
 }) => {
   // const [discounts, setDiscounts] = useState<IDiscountPar[]>([])
   const refDiscountSearch = useRef<HTMLDivElement>(null)
@@ -33,7 +35,7 @@ export const SelectionDiscounts: FC<SelectionDiscountsProps> = ({
     mutationFn: (keyword: string) => discountsApi.getAll({
       'filter[keyword]': keyword,
       'sort': '-created_at',
-      'filter[filter_all]': true
+      'filter[filter_all]': filterAll
     })
   })
   // eslint-disable-next-line react-hooks/exhaustive-deps
