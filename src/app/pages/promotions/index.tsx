@@ -48,10 +48,7 @@ function Promotions() {
                 <tr className='fw-bold text-muted'>
                   <th className='min-w-100px'>Image</th>
                   <th className='min-w-150px'>Tên promotion</th>
-                  <th className='min-w-150px'>Mô tả</th>
                   <th className='min-w-50px'>Popup</th>
-                  <th className='min-w-150px'>Deal</th>
-                  <th className='min-w-150px'>Dịch vụ</th>
                   <th className='min-w-100px'>Từ ngày</th>
                   <th className='min-w-100px'>Đến ngày</th>
                   <th className='min-w-80px'></th>
@@ -99,22 +96,7 @@ const PromotionItem: FC<{ item: Promotion }> = ({ item }) => {
         </div>
       </td>
       <td>
-        <span className='text-dark text-start fw-bold d-block mb-1 fs-7'>
-          {item.content}
-        </span>
-      </td>
-      <td>
         <XSwitch value={item.is_popup === 1 ? true : false} label="" />
-      </td>
-      <td>
-        <span className='text-dark text-start fw-bold d-block mb-1 fs-7'>
-          {item.content}
-        </span>
-      </td>
-      <td>
-        <span className='text-dark text-start fw-bold d-block mb-1 fs-7'>
-          {item.content}
-        </span>
       </td>
       <td>
         <span className='text-muted fw-semobold text-muted d-block fs-7'>
