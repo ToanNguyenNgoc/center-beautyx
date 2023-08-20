@@ -25,6 +25,9 @@ const PromotionFormPage = lazy(() => import("../pages/promotions/module/promotio
 const CommunityPage = lazy(() => import("../pages/community"))
 const CommunityFormPage = lazy(() => import('../pages/community/module/community-form'))
 
+const PushNotificationPage = lazy(() => import('../pages/push-notification/index'))
+const PushNotificationFormPage = lazy(() => import('../pages/push-notification/module/push-notification-form'))
+
 const OrdersPage = lazy(() => import('../pages/orders/index'))
 const CustomersPage = lazy(() => import('../pages/customers'))
 const Organizations = lazy(() => import('../pages/organizations'))
@@ -91,12 +94,25 @@ const InitRoute: any[] = [
     },
     //community
     {
-        path:'pages/community-form',
-        element:<CommunityFormPage/>
+        path: 'pages/community-form',
+        element: <CommunityFormPage />
     },
     {
-        path:"pages/community",
-        element:<CommunityPage/>
+        path: "pages/community",
+        element: <CommunityPage />
+    },
+    //push notification
+    {
+        path: "pages/push-notifications",
+        element: <PushNotificationPage />
+    },
+    {
+        path: "pages/push-notifications-form",
+        element: <PushNotificationFormPage />
+    },
+    {
+        path: "pages/push-notifications-form/:id",
+        element: <PushNotificationFormPage />
     },
     //order
     {

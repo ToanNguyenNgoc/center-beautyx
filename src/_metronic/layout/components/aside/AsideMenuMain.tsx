@@ -73,6 +73,11 @@ export function AsideMenuMain() {
           icon='/media/icons/duotune/finance/fin008.svg'
           title='Giảm giá'
         />
+        <AsideMenuItem
+          to='pages/push-notifications'
+          icon='/media/icons/duotune/communication/com004.svg'
+          title='Push thông báo'
+        />
         //-----
         <AsideMenuItem
           to='pages/setup-home'
