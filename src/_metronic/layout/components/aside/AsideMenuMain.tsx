@@ -85,6 +85,11 @@ export function AsideMenuMain() {
           title='Lịch sử kiểm duyệt'
         />
         <AsideMenuItem
+          to='pages/organizations'
+          icon='/media/icons/duotune/general/gen051.svg'
+          title='Danh sách MC'
+        />
+        <AsideMenuItem
           to='pages/contracts'
           icon='/media/icons/duotune/files/fil004.svg'
           title='Hợp đồng'
