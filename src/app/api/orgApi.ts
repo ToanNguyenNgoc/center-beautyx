@@ -20,7 +20,7 @@ class Organization {
         const url = `/organizations`;
         const paramsOb = {
             page: values.page || 1,
-            limit: 15,
+            limit: values.limit || 15,
             "filter[keyword]": values.keyword,
             "filter[tags]": values.tags,
             "filter[min_price]": values.min_price,
@@ -30,7 +30,7 @@ class Organization {
             "filter[province_code]": values.province_code,
             "filter[district_code]": values.district_code,
             "sort": values.sort !== "distance" ? values.sort : null,
-            "include": "tags|province|district|ward|branches|favorites"
+            "include": "province|district|ward"
         }
         const params = pickBy(paramsOb, identity);
         return axiosClient.get(url, AUTH_HEADER_PARAM_GET(params))

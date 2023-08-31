@@ -48,9 +48,9 @@ function Discounts() {
     })
   }
   const queryClient = useQueryClient()
-  const {mutate} = useMutation({
-    mutationFn:(id:number|string) => discountsApi.deleteById(id),
-    onSuccess:()=>{
+  const { mutate } = useMutation({
+    mutationFn: (id: number | string) => discountsApi.deleteById(id),
+    onSuccess: () => {
       queryClient.invalidateQueries([QR_KEY.DISCOUNT_PAGE, query])
     }
   })
@@ -157,15 +157,16 @@ function Discounts() {
                         <div className='d-flex justify-content-end flex-shrink-0 tb-control'>
                           {
                             // METHOD?.includes("UPDATE") &&
-                            <Link
-                              to={{
-                                pathname: `/pages/discounts-form/${item.uuid}`
-                              }}
+                            <button
+                              // to={{
+                              //   pathname: `/pages/discounts-form/${item.uuid}`,
+                              // }}
+                              onClick={() => navigate(`/pages/discounts-form/${item.uuid}`, { state: item })}
                               aria-label='Xem chi tiết'
                               className='btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1'
                             >
                               <KTSVG path='/media/icons/duotune/art/art005.svg' className='svg-icon-3' />
-                            </Link>
+                            </button>
                           }
                           {
                             // METHOD?.includes("GET_BY_ID") &&

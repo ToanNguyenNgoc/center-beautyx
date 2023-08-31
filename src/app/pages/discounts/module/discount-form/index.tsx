@@ -1,15 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import './style.scss'
 import Form from './form';
-import { useParams } from 'react-router-dom';
+import { Location, useLocation, useParams } from 'react-router-dom';
 import { useVerifyRoute } from 'app/hooks';
 import { useQuery } from 'react-query';
 import { QR_KEY } from 'common';
 import { discountsApi } from 'app/api';
 import TitlePage from 'components/TitlePage';
 import { PageCircularProgress } from 'components';
+import { IDiscountPar } from 'app/interface';
+
+interface LocationPage extends Location {
+    state: IDiscountPar
+}
 
 function DiscountForm() {
+    const location = useLocation() as LocationPage
     const { METHOD } = useVerifyRoute()
     const params: any = useParams()
     let isForm = "ADD";
@@ -23,7 +29,7 @@ function DiscountForm() {
         }),
         enabled: params.id ? true : false
     })
-    const discount = data?.context
+    const discount = data?.context || location.state
 
     return (
         <>
@@ -32,7 +38,7 @@ function DiscountForm() {
             />
             <div className='post d-flex flex-column-fluid' id="kt_post">
                 <div className="container">
-                    {isLoading && <PageCircularProgress/>}
+                    {isLoading && <PageCircularProgress />}
                     {(isForm === "ADD" || discount) &&
                         <Form
                             isForm={isForm}

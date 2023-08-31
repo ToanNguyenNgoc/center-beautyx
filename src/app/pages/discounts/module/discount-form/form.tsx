@@ -104,7 +104,8 @@ function Form(props: IProps) {
                 organizations: values.organizations?.map(i => i.id)[0],
                 items: services.map((i: any) => i.id),
                 platform: newValue.platform[0] ?? 'MOMO',
-                is_campaign: isCampaign ? 1 : 0
+                is_campaign: isCampaign ? 1 : 0,
+                limit:Number(values.limit)
             }
             if (services.length > 0) {
                 mutate(body)
